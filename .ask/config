@@ -1,17 +1,30 @@
 {
   "deploy_settings": {
     "default": {
-      "skill_id": "",
+      "skill_id": "amzn1.ask.skill.2340b595-eb87-4e81-9901-e7e6149a4125",
       "resources": {
         "lambda": [
           {
             "alexaUsage": [
               "custom/default"
             ],
+            "arn": "arn:aws:lambda:us-east-1:033627983326:function:ask-custom-Alexa_Anonymous-default",
+            "awsRegion": "us-east-1",
+            "codeUri": "lambda/py",
+            "functionName": "ask-custom-Alexa_Anonymous-default",
             "handler": "lambda_function.lambda_handler",
+            "revisionId": "843ccbb5-3617-4c74-b3b2-82b041bcf5c2",
             "runtime": "python3.6"
           }
-        ]
+        ],
+        "manifest": {
+          "eTag": "779582a9324c9aeccb1ebfcd4a39a9df"
+        },
+        "interactionModel": {
+          "en-US": {
+            "eTag": "2f40036b961e515e7f30f2290f23d63c"
+          }
+        }
       },
       "was_cloned": false,
       "merge": {}
