@@ -13,12 +13,12 @@
             "codeUri": "lambda/py",
             "functionName": "ask-custom-Alexa_Anonymous-default",
             "handler": "lambda_function.lambda_handler",
-            "revisionId": "843ccbb5-3617-4c74-b3b2-82b041bcf5c2",
+            "revisionId": "13b39eaf-4c09-482c-8e56-f18bdfbfd431",
             "runtime": "python3.6"
           }
         ],
         "manifest": {
-          "eTag": "779582a9324c9aeccb1ebfcd4a39a9df"
+          "eTag": "ed63e67a80d3a11906ae6248ed71d0b8"
         },
         "interactionModel": {
           "en-US": {
