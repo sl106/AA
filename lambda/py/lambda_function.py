@@ -43,6 +43,8 @@ class LaunchRequestHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In LaunchRequestHandler")
+        attr = handler_input.attributes_manager.session_attributes
+        attr["status"] = "player number"
         handler_input.response_builder.speak(data.WELCOME_MESSAGE).ask(
             data.REPROMPT_PLAYERNO)
         return handler_input.response_builder.response
@@ -100,7 +102,8 @@ class PlayerNumberIntentHandler(AbstractRequestHandler):
 
     def can_handle(self, handler_input):
         #type: (HandlerInput) -> bool
-        return is_intent_name("PlayerNumberIntent")(handler_input)
+        attr = handler_input.attributes_manager.session_attributes
+        return is_intent_name("PlayerNumberIntent")(handler_input) and attr.get("status") == "player number"
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -108,6 +111,7 @@ class PlayerNumberIntentHandler(AbstractRequestHandler):
         attr = handler_input.attributes_manager.session_attributes
 
         attr["player_no"] = handler_input.request_envelope.request.intent.slots["player_number"].value
+        attr["status"] = "collecting names"
         attr["players_collected"] = 0
         attr["player_names"] = []
 
@@ -121,7 +125,8 @@ class PlayerNameIntentHandler(AbstractRequestHandler):
 
     def can_handle(self, handler_input):
         #type: (HandlerInput) -> bool
-        return is_intent_name("PlayerNameIntent")(handler_input)
+        attr = handler_input.attributes_manager.session_attributes
+        return is_intent_name("PlayerNameIntent")(handler_input) and attr.get("status") == "collecting names"
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -132,6 +137,7 @@ class PlayerNameIntentHandler(AbstractRequestHandler):
         attr["player_names"].append(handler_input.request_envelope.request.intent.slots["player_name"].value)
 
         if int(attr["players_collected"]) == int(attr["player_no"]):
+            attr["status"] = "picking theme"
             attr["round_no"] = 1
             text = data.START_QUIZ_MESSAGE + str(attr["round_no"]) + "? " + data.LIST_THEMES
             handler_input.response_builder.speak(text).ask(text)
@@ -149,12 +155,14 @@ class ThemeOptionIntentHandler(AbstractRequestHandler):
 
     def can_handle(self, handler_input):
         #type: (HandlerInput) -> bool
-        return is_intent_name("ThemeOptionIntent")(handler_input)
+        attr = handler_input.attributes_manager.session_attributes
+        return is_intent_name("ThemeOptionIntent")(handler_input) and attr.get("status") == "picking theme"
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In ThemeOptionIntentHandler")
         attr = handler_input.attributes_manager.session_attributes
+        attr["status"] = "question"
         attr["current_theme"] = handler_input.request_envelope.request.intent.slots["theme"].value.lower()
         attr["current_qno"] = 1
 
@@ -182,6 +190,7 @@ class NewThemeHandler(AbstractRequestHandler):
         logger.info("In NewThemeHandler")
         attr = handler_input.attributes_manager.session_attributes
 
+        attr["status"] = "picking theme"
         attr["round_no"] = attr["round_no"] + 1
         text = data.NEXT_ROUND_MESSAGE + str(attr["round_no"]) + ". " + data.LIST_THEMES
         handler_input.response_builder.speak(text).ask(text)
@@ -201,7 +210,7 @@ class QuizAnswerHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
         return (is_intent_name("AnswerIntent")(handler_input) and
-                attr.get("state") == "QUIZ")
+                attr.get("status") == "question")
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -210,116 +219,88 @@ class QuizAnswerHandler(AbstractRequestHandler):
         response_builder = handler_input.response_builder
 
         item = attr["quiz_item"]
-        item_attr = attr["quiz_attr"]
-        is_ans_correct = util.compare_token_or_slots(
-            handler_input=handler_input,
-            value=item[item_attr])
+        user_ans = handler_input.request_envelope.request.intent.slots
 
-        if is_ans_correct:
+        if util.check_answer(user_ans, item[1]):
             speech = util.get_speechcon(correct_answer=True)
-            attr["quiz_score"] += 1
-            handler_input.attributes_manager.session_attributes = attr
+            task = util.generate_task(attr, attr["current_player"])
         else:
-            speech = util.get_speechcon(correct_answer=False)
+            speech = util.get_speechcon(correct_answer=False) + "! The answer was " + item[1]
+            task = util.generate_forfeit(attr, attr["current_player"])
 
-        speech += util.get_answer(item_attr, item)
+        resp = speech + "! " + task
 
-        if attr['counter'] < data.MAX_QUESTIONS:
+        if attr['current_qno'] < data.MAX_QUESTIONS:
             # Ask another question
-            speech += util.get_current_score(
-                attr["quiz_score"], attr["counter"])
-            question = util.ask_question(handler_input)
-            speech += question
-            reprompt = question
+            attr["current_qno"] = attr["current_qno"] + 1
+            attr["status"] = "question"
 
-            # Update item and item_attr for next question
-            item = attr["quiz_item"]
-            item_attr = attr["quiz_attr"]
+            # Generates new player to ask
+            playername = util.get_recipient(attr)
+            attr["current_player"] = playername
 
-            if data.USE_CARDS_FLAG:
-                response_builder.set_card(
-                    ui.StandardCard(
-                        title="Question #{}".format(str(attr["counter"])),
-                        text=question,
-                        image=ui.Image(
-                            small_image_url=util.get_small_image(item),
-                            large_image_url=util.get_large_image(item)
-                        )))
+            # Generates new question
+            attr["quiz_item"] = util.get_item(attr)
+            question = util.get_question(attr["quiz_item"])
+            question_text = resp + " Time for the next question! " + playername + ", " + question
+            handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question)
 
-            if util.supports_display(handler_input):
-                title = "Question #{}".format(str(attr["counter"]))
-                background_img = Image(
-                    sources=[ImageInstance(
-                        util.get_image(
-                            ht=1024, wd=600,
-                            label=attr["quiz_item"]["abbreviation"]))])
-                item_list = []
-                for ans in util.get_multiple_choice_answers(
-                        item, item_attr, data.STATES_LIST):
-                    item_list.append(ListItem(
-                        token=ans,
-                        text_content=get_plain_text_content(primary_text=ans)))
-
-                response_builder.add_directive(
-                    RenderTemplateDirective(
-                        ListTemplate1(
-                            token="Question",
-                            back_button=BackButtonBehavior.HIDDEN,
-                            background_image=background_img,
-                            title=title,
-                            list_items=item_list)))
-            return response_builder.speak(speech).ask(reprompt).response
+            return handler_input.response_builder.response
         else:
-            # Finished all questions.
-            speech += util.get_final_score(attr["quiz_score"], attr["counter"])
-            speech += data.EXIT_SKILL_MESSAGE
+            # Start new round
+            attr["status"] = "picking theme"
+            attr["round_no"] = attr["round_no"] + 1
+            text = data.NEXT_ROUND_MESSAGE + str(attr["round_no"]) + ". " + data.LIST_THEMES
+            handler_input.response_builder.speak(resp + " " + text).ask(text)
 
-            response_builder.set_should_end_session(True)
-
-            if data.USE_CARDS_FLAG:
-                response_builder.set_card(
-                    ui.StandardCard(
-                        title="Final Score".format(str(attr["counter"])),
-                        text=(util.get_final_score(
-                            attr["quiz_score"], attr["counter"]) +
-                              data.EXIT_SKILL_MESSAGE)
-                    ))
-
-            if util.supports_display(handler_input):
-                title = "Thank you for playing"
-                primary_text = get_rich_text_content(
-                    primary_text=util.get_final_score(
-                        attr["quiz_score"], attr["counter"]))
-
-                response_builder.add_directive(
-                    RenderTemplateDirective(
-                        BodyTemplate1(
-                            back_button=BackButtonBehavior.HIDDEN,
-                            title=title,
-                            text_content=primary_text
-                        )))
-
-            return response_builder.speak(speech).response
+            return handler_input.response_builder.response
 
 
-class QuizAnswerElementSelectedHandler(AbstractRequestHandler):
-    """Handler for ElementSelected Request.
+class UnsureAnswerHandler(AbstractRequestHandler):
+    """Handler for when the user doesn't give a definitive answer"""
 
-    This handler handles the logic of Display.ElementSelected request
-    if the users selects the answer choice on a multimodal device,
-    rather than answering through voice. This calls the QuizAnswerHandler
-    handle function directly, since the underlying logic of checking the
-    answer and responding is the same."""
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return (attr.get("state") == "QUIZ" and
-                is_request_type("Display.ElementSelected")(handler_input))
-
+        return (is_intent_name("UnsureIntent")(handler_input) and
+                attr.get("status") == "question")
+                
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        logger.info("In QuizAnswerElementSelectedHandler")
-        return QuizAnswerHandler().handle(handler_input)
+        logger.info("In QuizAnswerHandler")
+        attr = handler_input.attributes_manager.session_attributes
+        response_builder = handler_input.response_builder
+
+        item = attr["quiz_item"]
+        speech = "Well that's a shame. The answer was {}".format(item[1])
+        task = util.generate_forfeit(attr, attr["current_player"])
+
+        resp = speech + "! " + task
+
+        if attr['current_qno'] < data.MAX_QUESTIONS:
+            # Ask another question
+            attr["current_qno"] = attr["current_qno"] + 1
+            attr["status"] = "question"
+
+            # Generates new player to ask
+            playername = util.get_recipient(attr)
+            attr["current_player"] = playername
+
+            # Generates new question
+            attr["quiz_item"] = util.get_item(attr)
+            question = util.get_question(attr["quiz_item"])
+            question_text = resp + " Time for the next question! " + playername + ", " + question
+            handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question)
+
+            return handler_input.response_builder.response
+        else:
+            # Start new round
+            attr["status"] = "picking theme"
+            attr["round_no"] = attr["round_no"] + 1
+            text = data.NEXT_ROUND_MESSAGE + str(attr["round_no"]) + ". " + data.LIST_THEMES
+            handler_input.response_builder.speak(resp + " " + text).ask(text)
+
+            return handler_input.response_builder.response
 
 
 class RepeatHandler(AbstractRequestHandler):
@@ -418,9 +399,8 @@ class ResponseLogger(AbstractResponseInterceptor):
 # Add all request handlers to the skill.
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(NewThemeHandler())
-sb.add_request_handler(DefinitionHandler())
 sb.add_request_handler(QuizAnswerHandler())
-sb.add_request_handler(QuizAnswerElementSelectedHandler())
+sb.add_request_handler(UnsureAnswerHandler())
 sb.add_request_handler(PlayerNumberIntentHandler())
 sb.add_request_handler(PlayerNameIntentHandler())
 sb.add_request_handler(ThemeOptionIntentHandler())

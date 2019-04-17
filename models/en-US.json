@@ -1,217 +1,456 @@
 {
   "interactionModel": {
-    "languageModel": {
-      "invocationName": "that drinking game",
-      "intents": [
-        {
-          "name": "AMAZON.CancelIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.HelpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.PauseIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.StartOverIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.StopIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.RepeatIntent",
-          "samples": []
-        },
-        {
-          "name": "PlayerNumberIntent",
-          "slots": [
-            {
-              "name": "player_number",
-              "type": "AMAZON.NUMBER"
-            }
-          ],
-          "samples": [
-            "{player_number}",
-            "{player_number} of us",
-            "there are {player_number} players",
-            "there are {player_number} of us",
-            "{player_number} players"
-          ]
-        },
-        {
-          "name": "PlayerNameIntent",
-          "slots": [
-            {
-              "name": "player_name",
-              "type": "AMAZON.GB_FIRST_NAME"
-            }
-          ],
-          "samples": [
-            "{player_name}",
-            "I am {player_name}",
-            "she is {player_name}",
-            "he is {player_name}"
-          ]
-        },
-        {
-          "name": "ThemeOptionIntent",
-          "slots": [
-            {
-              "name": "theme",
-              "type": "THEME_OPTION"
-            }
-          ],
-          "samples": [
-            "{theme}",
-            "Let's go with {theme}",
-            "We want {theme}",
-            "How about {theme}"
-          ]
-        },
-        {
-          "name": "AnswerIntent",
-          "slots": [
-            {
-              "name": "harry_potter_houses",
-              "type": "AMAZON.NUMBER"
-            }
-          ],
-          "samples": [
-            "{harry_potter_houses}"
-          ]
-        },
-        {
-          "name": "NewThemeIntent",
-          "samples": [
-            "start a new round",
-            "start a new theme",
-            "change the theme",
-            "move to the next round",
-            "next round",
-            "new round",
-            "new theme",
-            "we want a different theme",
-            "switch the theme",
-            "I don't like this theme"
-          ]
-        },
-        {
-          "name": "AMAZON.MoreIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NavigateHomeIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NavigateSettingsIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.NextIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.PageUpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.PageDownIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.PreviousIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.ScrollRightIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.ScrollDownIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.ScrollLeftIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.ScrollUpIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.FallbackIntent",
-          "samples": []
-        }
-      ],
-      "types": [
-        {
-          "name": "THEME_OPTION",
-          "values": [
-            {
-              "name": {
-                "value": "Game of Thrones",
-                "synonyms": [
-                  "GoT",
-                  "A song of Ice and Fire"
-                ]
+      "languageModel": {
+          "invocationName": "that drinking game",
+          "intents": [
+              {
+                  "name": "AMAZON.CancelIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.HelpIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.PauseIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.StartOverIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.StopIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.RepeatIntent",
+                  "samples": []
+              },
+              {
+                  "name": "PlayerNumberIntent",
+                  "slots": [
+                      {
+                          "name": "player_number",
+                          "type": "AMAZON.NUMBER"
+                      }
+                  ],
+                  "samples": [
+                      "{player_number}",
+                      "{player_number} of us",
+                      "there are {player_number} players",
+                      "there are {player_number} of us",
+                      "{player_number} players"
+                  ]
+              },
+              {
+                  "name": "PlayerNameIntent",
+                  "slots": [
+                      {
+                          "name": "player_name",
+                          "type": "AMAZON.GB_FIRST_NAME"
+                      }
+                  ],
+                  "samples": [
+                      "{player_name}",
+                      "I am {player_name}",
+                      "she is {player_name}",
+                      "he is {player_name}"
+                  ]
+              },
+              {
+                  "name": "ThemeOptionIntent",
+                  "slots": [
+                      {
+                          "name": "theme",
+                          "type": "THEME_OPTION"
+                      }
+                  ],
+                  "samples": [
+                      "{theme}",
+                      "Let's go with {theme}",
+                      "We want {theme}",
+                      "How about {theme}"
+                  ]
+              },
+              {
+                  "name": "AnswerIntent",
+                  "slots": [
+                      {
+                          "name": "hp_house",
+                          "type": "HP_HOUSES"
+                      },
+                      {
+                          "name": "hp_character",
+                          "type": "HP_NAMES"
+                      },
+                      {
+                          "name": "name",
+                          "type": "AMAZON.GB_FIRST_NAME"
+                      },
+                      {
+                          "name": "boolean",
+                          "type": "TF"
+                      }
+                  ],
+                  "samples": [
+                      "{hp_house}",
+                      "I think it's {hp_house}",
+                      "is it {hp_house}",
+                      "{hp_character}",
+                      "is it {hp_character}",
+                      "I think it's {hp_character}",
+                      "{name}",
+                      "is it {name}",
+                      "How about {name}",
+                      "{boolean}",
+                      "I think it's {boolean}",
+                      "it's {boolean}",
+                      "it's {hp_character}",
+                      "it's {hp_house}",
+                      "it's {name}"
+                  ]
+              },
+              {
+                  "name": "NewThemeIntent",
+                  "slots": [],
+                  "samples": [
+                      "start a new round",
+                      "start a new theme",
+                      "change the theme",
+                      "move to the next round",
+                      "next round",
+                      "new round",
+                      "new theme",
+                      "we want a different theme",
+                      "switch the theme",
+                      "I don't like this theme"
+                  ]
+              },
+              {
+                  "name": "AMAZON.MoreIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.NavigateHomeIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.NavigateSettingsIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.NextIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.PageUpIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.PageDownIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.PreviousIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.ScrollRightIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.ScrollDownIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.ScrollLeftIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.ScrollUpIntent",
+                  "samples": []
+              },
+              {
+                  "name": "AMAZON.FallbackIntent",
+                  "samples": []
+              },
+              {
+                  "name": "UnsureIntent",
+                  "slots": [],
+                  "samples": [
+                      "call a friend",
+                      "I pass",
+                      "I forfeit",
+                      "give up",
+                      "I give up",
+                      "forfeit",
+                      "pass",
+                      "skip",
+                      "don't know",
+                      "unsure",
+                      "no idea",
+                      "I don't have any idea",
+                      "I don't have a clue",
+                      "no clue",
+                      "not a clue",
+                      "I don't know",
+                      "not sure",
+                      "I'm not sure"
+                  ]
               }
-            },
-            {
-              "name": {
-                "value": "Star Wars"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "dialog": {
-      "intents": [
-          {
-              "name": "ThemeOptionIntent",
-              "confirmationRequired": false,
-              "prompts": {},
-              "slots": [
-                  {
-                      "name": "theme",
-                      "type": "THEME_OPTION",
-                      "confirmationRequired": false,
-                      "elicitationRequired": false,
-                      "prompts": {},
-                      "validations": [
-                          {
-                              "type": "isInSet",
-                              "prompt": "Slot.Validation.994622755241.1243453430094.1063438581692",
-                              "values": [
-                                  "Game of Thrones",
-                                  "Star Wars",
-                                  "got",
+          ],
+          "types": [
+              {
+                  "name": "THEME_OPTION",
+                  "values": [
+                      {
+                          "name": {
+                              "value": "Game of Thrones",
+                              "synonyms": [
+                                  "GoT",
                                   "A song of Ice and Fire"
                               ]
                           }
-                      ]
+                      },
+                      {
+                          "name": {
+                              "value": "Star Wars"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Harry Potter"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "General Knowledge"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Capitals"
+                          }
+                      }
+                  ]
+              },
+              {
+                  "name": "HP_NAMES",
+                  "values": [
+                      {
+                          "name": {
+                              "value": "Harry Potter"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Ronald Weasley"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Gilderoy Lockhart"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Nymphadora Tonks"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "George Weasley"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Fred Weasley"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Molly Weasley"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Molly Weasley"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Minerva McGonagall"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Ginevra Weasley"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Dolores Umbridge"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Lucius Malfoy"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Draco Malfoy"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Bellatrix Lestrange"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Luna Lovegood"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Rubeus Hagrid"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Tom Riddle"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Neville Longbottom"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Albus Dumbledore"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Remus Lupin"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Sirius Black"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Severus Snape"
+                          }
+                      }
+                  ]
+              },
+              {
+                  "name": "HP_HOUSES",
+                  "values": [
+                      {
+                          "name": {
+                              "value": "gryffindor"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "ravenclaw"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "hufflepuff"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "Nymphadora Tonks"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "slytherin"
+                          }
+                      }
+                  ]
+              },
+              {
+                  "name": "TF",
+                  "values": [
+                      {
+                          "name": {
+                              "value": "true"
+                          }
+                      },
+                      {
+                          "name": {
+                              "value": "false"
+                          }
+                      }
+                  ]
+              }
+          ]
+      },
+      "dialog": {
+          "intents": [
+              {
+                  "name": "ThemeOptionIntent",
+                  "confirmationRequired": false,
+                  "prompts": {},
+                  "slots": [
+                      {
+                          "name": "theme",
+                          "type": "THEME_OPTION",
+                          "confirmationRequired": false,
+                          "elicitationRequired": false,
+                          "prompts": {},
+                          "validations": [
+                              {
+                                  "type": "isInSet",
+                                  "prompt": "Slot.Validation.994622755241.1243453430094.1063438581692",
+                                  "values": [
+                                      "Star Wars",
+                                      "A song of Ice and Fire",
+                                      "Game of Thrones",
+                                      "got",
+                                      "General Knowledge",
+                                      "general",
+                                      "capitals",
+                                      "countries",
+                                      "geography",
+                                      "general questions",
+                                      "anything",
+                                      "whatever",
+                                      "harry potter",
+                                      "capital cities",
+                                      "hp",
+                                      "fantastic beasts",
+                                      "the wizarding world"
+                                  ]
+                              }
+                          ]
+                      }
+                  ]
+              }
+          ],
+          "delegationStrategy": "ALWAYS"
+      },
+      "prompts": [
+          {
+              "id": "Slot.Validation.994622755241.1243453430094.1063438581692",
+              "variations": [
+                  {
+                      "type": "PlainText",
+                      "value": "Sorry, that theme is unavailable. What theme would you like?"
                   }
               ]
           }
-      ],
-      "delegationStrategy": "ALWAYS"
-    },
-    "prompts": [
-        {
-            "id": "Slot.Validation.994622755241.1243453430094.1063438581692",
-            "variations": [
-                {
-                    "type": "PlainText",
-                    "value": "Sorry, that theme is unavailable. What theme would you like?"
-                }
-            ]
-        }
-    ]
+      ]
   }
 }
