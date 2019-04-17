@@ -93,34 +93,15 @@ def get_speech_description(item):
         item['state'])
 
 
-def get_ordinal_indicator(counter):
-    """Return st, nd, rd, th ordinal indicators according to counter."""
-    if counter == 1:
-        return "1st"
-    elif counter == 2:
-        return "2nd"
-    elif counter == 3:
-        return "3rd"
-    else:
-        return "{}th".format(str(counter))
-
-
 def __get_attr_for_speech(attr):
     """Helper function to convert attribute name."""
     return attr.lower().replace("_", " ").strip()
 
 
-def get_question_without_ordinal(attr, item):
-    return "What is the {} of {}. ".format(
-        __get_attr_for_speech(attr), item["state"])
+def get_question(attr, item):
+    question = item.keys()[0]
 
-
-def get_question(counter, attr, item):
-    """Return response text for nth question to the user."""
-    return (
-        "Here is your {} question. {}").format(
-        get_ordinal_indicator(counter),
-        get_question_without_ordinal(attr, item))
+    return question
 
 
 def get_answer(attr, item):
@@ -132,23 +113,6 @@ def get_answer(attr, item):
     else:
         return "The {} of {} is {}. ".format(
             __get_attr_for_speech(attr), item["state"], item[attr.lower()])
-
-
-def ask_question(handler_input):
-    # (HandlerInput) -> None
-    """Get a random state and property, return question about it."""
-    random_state = get_random_state(data.STATES_LIST)
-    random_property = get_random_state_property()
-
-    attr = handler_input.attributes_manager.session_attributes
-
-    attr["quiz_item"] = random_state
-    attr["quiz_attr"] = random_property
-    attr["counter"] += 1
-
-    handler_input.attributes_manager.session_attributes = attr
-
-    return get_question(attr["counter"], random_property, random_state)
 
 
 def get_speechcon(correct_answer):
@@ -178,19 +142,11 @@ def get_multiple_choice_answers(item, attr, states_list):
 
 def get_item(slots, states_list):
     """Get matching data object from slot value."""
-    item = []
-    resolved_slot = None
-    for _, slot in six.iteritems(slots):
-        if slot.value is not None:
-            resolved_slot = slot.value
-            for state in states_list:
-                for _, v in six.iteritems(state):
-                    if v.lower() == slot.value.lower():
-                        item.append(state)
-            if len(item) > 0:
-                return item[0], True
-    else:
-        return resolved_slot, False
+    if attr["current_theme"] == "Game of Thrones":
+        return make_got_question()
+    elif attr["current_theme"] == "Star Wars":
+        #here
+        return None
 
 
 def compare_token_or_slots(handler_input, value):

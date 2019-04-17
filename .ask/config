@@ -13,7 +13,7 @@
             "codeUri": "lambda/py/lambda_upload",
             "functionName": "ask-custom-Alexa_Anonymous-default",
             "handler": "lambda_function.lambda_handler",
-            "revisionId": "475e025f-9a7a-4be6-b6d9-9fa1e3627da2",
+            "revisionId": "2aea6b9c-d2e5-4aa4-b184-fc64e7a86845",
             "runtime": "python3.6"
           }
         ],
@@ -22,7 +22,7 @@
         },
         "interactionModel": {
           "en-US": {
-            "eTag": "68ad0e04777a9e69dc188441e9e842f3"
+            "eTag": "878f78df5c080e86c58d42848e22a6b0"
           }
         }
       },

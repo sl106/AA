@@ -258,7 +258,7 @@ WELCOME_MESSAGE = ("Welcome to that drinking game! How many players are playing?
 
 START_QUIZ_MESSAGE = ("Let's begin! Which theme would you like for round ")
 
-NEXT_THEME_MESSAGE = "Okay! Time for round "
+NEXT_ROUND_MESSAGE = "Okay! Time for round "
 
 LIST_THEMES = ("The themes to choose from are: "
                 "Game of Thrones, "

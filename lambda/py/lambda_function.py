@@ -155,36 +155,39 @@ class ThemeOptionIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         logger.info("In ThemeOptionIntentHandler")
         attr = handler_input.attributes_manager.session_attributes
+        attr["current_theme"] = handler_input.request_envelope.request.intent.slots["theme"].value
+        attr["current_qno"] = 1
+
+        playername = util.get_recipient(attr)
+
+        #TODO: EDIT HOW TO GENERATE QUESTION
+        #item = util.get_item()
+        #question = util.get_question(attr["current_qno"],attr,item)
+        question = "QUESTION HERE!"
+        question_text = playername + ", " + question
+        handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question)
+
+        return handler_input.response_builder.response
 
 
-class QuizHandler(AbstractRequestHandler):
-    """Handler for starting a quiz.
+class NewThemeHandler(AbstractRequestHandler):
+    """Handler for changing the theme or moving to the next round."""
 
-    The ``handle`` method will initiate a quiz state and build a
-    question randomly from the states data, using the util methods.
-    If the skill can use cards, then the question choices are added to
-    the card and shown in the Response. If the skill uses display,
-    then the question is displayed using RenderTemplates.
-    """
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
-        return (is_intent_name("QuizIntent")(handler_input) or
+        return (is_intent_name("NewThemeIntent")(handler_input) or
                 is_intent_name("AMAZON.StartOverIntent")(handler_input))
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
-        logger.info("In QuizHandler")
+        logger.info("In NewThemeHandler")
         attr = handler_input.attributes_manager.session_attributes
-        attr["state"] = "QUIZ"
-        attr["counter"] = 0
-        attr["quiz_score"] = 0
 
-        question = util.ask_question(handler_input)
-        response_builder = handler_input.response_builder
-        response_builder.speak(data.START_QUIZ_MESSAGE + question)
-        response_builder.ask(question)
+        attr["round_no"] = attr["round_no"] + 1
+        text = data.NEXT_ROUND_MESSAGE + str(attr["round_no"]) + ". " + data.LIST_THEMES
+        handler_input.response_builder.speak(text).ask(text)
 
-        return response_builder.response
+        return handler_input.response_builder.response
 
 
 class DefinitionHandler(AbstractRequestHandler):
@@ -453,7 +456,7 @@ class ResponseLogger(AbstractResponseInterceptor):
 
 # Add all request handlers to the skill.
 sb.add_request_handler(LaunchRequestHandler())
-sb.add_request_handler(QuizHandler())
+sb.add_request_handler(NewThemeHandler())
 sb.add_request_handler(DefinitionHandler())
 sb.add_request_handler(QuizAnswerHandler())
 sb.add_request_handler(QuizAnswerElementSelectedHandler())
