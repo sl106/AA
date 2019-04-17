@@ -5,6 +5,9 @@ import random
 import six
 from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_core.utils import is_request_type
+import requests
+import json
+import random
 
 from . import data
 
@@ -139,6 +142,48 @@ def get_multiple_choice_answers(item, attr, states_list):
     random.shuffle(answers_list)
     return answers_list
 
+def make_got_question():
+    cool_characters = [583, 957, 148, 238, 529, 1052, 27, 565, 271]
+    random_no = random.randint(0, len(cool_characters) - 2)
+    response = requests.get("https://anapioficeandfire.com/api/characters/" + str(cool_characters[random_no]))
+    response = response.text
+    response_data = json.loads(response)
+    choose_random = random.randint(0, 4)
+    x = {}
+    if choose_random == 0:
+        answer = response_data["playedBy"]
+        if answer != "[]":
+            x["Who plays " + response_data["name"] + "?"] = answer
+    elif choose_random == 1:
+        answer = response_data["name"]
+        if answer != "[]":
+            x["Which character goes by the following aliases: " + str(response_data["aliases"]) + "?"] = answer
+    elif choose_random == 2:
+        answer = response_data["titles"]
+        if answer == "[]":
+            answer = "None"
+        x["What are the titles of " + str(response_data["name"]) + ", if any?"] = answer
+    elif choose_random == 3:
+        answer = response_data["father"]
+        if not answer:
+            answer = "None"
+        else:
+            new_response = requests.get(str(answer))
+            new_response = new_response.text
+            new_data = json.loads(new_response)
+            answer = new_data["name"]
+        x["Who is the father of " + str(response_data["name"]) + ", if any?"] = answer
+    elif choose_random == 4:
+        answer = response_data["mother"]
+        if not answer:
+            answer = "None"
+        else:
+            new_response = requests.get(str(answer))
+            new_response = new_response.text
+            new_data = json.loads(new_response)
+            answer = new_data["name"]
+        x["Who is the mother of " + str(response_data["name"]) + ", if any?"] = answer
+    return x
 
 def get_item(slots, states_list):
     """Get matching data object from slot value."""
@@ -147,7 +192,6 @@ def get_item(slots, states_list):
     elif attr["current_theme"] == "Star Wars":
         #here
         return None
-
 
 def compare_token_or_slots(handler_input, value):
     """Compare value with slots or token,
