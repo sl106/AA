@@ -77,12 +77,12 @@
           "name": "AnswerIntent",
           "slots": [
             {
-              "name": "statehood_order",
+              "name": "harry_potter_houses",
               "type": "AMAZON.NUMBER"
             }
           ],
           "samples": [
-            "{statehood_order}"
+            "{harry_potter_houses}"
           ]
         },
         {

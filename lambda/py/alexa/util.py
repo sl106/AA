@@ -12,33 +12,6 @@ from ask_sdk_core.utils import is_request_type
 from . import data
 
 
-def get_random_state(states_list):
-    """Return a random value from the list of states."""
-    return random.choice(states_list)
-
-
-def state_properties():
-    """Return the list of state properties."""
-    val = ["abbreviation", "capital", "statehood_year",
-           "statehood_order"]
-    return val
-
-
-def get_random_state_property():
-    """Return a random state property."""
-    return random.choice(state_properties())
-
-
-def get_card_description(item):
-    """Return the description shown on card in Alexa response."""
-    text = "State Name: {}\n".format(item['state'])
-    text += "State Capital: {}\n".format(item['capital'])
-    text += "Statehood Year: {}\n".format(item['statehood_year'])
-    text += "Statehood Order: {}\n".format(item['statehood_order'])
-    text += "Abbreviation: {}\n".format(item['abbreviation'])
-    return text
-
-
 def supports_display(handler_input):
     # type: (HandlerInput) -> bool
     """Check if display is supported by the skill."""
@@ -68,82 +41,10 @@ def get_final_score(score, counter):
     return data.SCORE.format("final", score, counter)
 
 
-def get_card_title(item):
-    """Return state name as card title."""
-    return item["state"]
-
-
-def get_image(ht, wd, label):
-    """Get flag image with specified height, width and state abbr as label."""
-    return data.IMG_PATH.format(str(ht), str(wd), label)
-
-
-def get_small_image(item):
-    """Get state flag small image (720x400)."""
-    return get_image(720, 400, item['abbreviation'])
-
-
-def get_large_image(item):
-    """Get state flag large image (1200x800)."""
-    return get_image(1200, 800, item['abbreviation'])
-
-
-def get_speech_description(item):
-    """Return state information in well formatted text."""
-    return data.SPEECH_DESC.format(
-        item['state'], item['statehood_order'], item['statehood_year'],
-        item['state'], item['capital'], item['state'], item['abbreviation'],
-        item['state'])
-
-
 def __get_attr_for_speech(attr):
     """Helper function to convert attribute name."""
     return attr.lower().replace("_", " ").strip()
 
-
-def get_question(item):
-    if item is not None:
-        question = item[0]
-    else:
-        question = "QUESTION HERE!"
-
-    return question
-
-
-def get_answer(attr, item):
-    """Return response text for correct answer to the user."""
-    if attr.lower() == "abbreviation":
-        return ("The {} of {} is "
-                "<say-as interpret-as='spell-out'>{}</say-as>. ").format(
-            __get_attr_for_speech(attr), item["state"], item["abbreviation"])
-    else:
-        return "The {} of {} is {}. ".format(
-            __get_attr_for_speech(attr), item["state"], item[attr.lower()])
-
-
-def get_speechcon(correct_answer):
-    """Return speechcon corresponding to the boolean answer correctness."""
-    text = ("<say-as interpret-as='interjection'>{} !"
-            "</say-as><break strength='strong'/>")
-    if correct_answer:
-        return text.format(random.choice(data.CORRECT_SPEECHCONS))
-    else:
-        return text.format(random.choice(data.WRONG_SPEECHCONS))
-
-
-def get_multiple_choice_answers(item, attr, states_list):
-    """Return multiple choices for the display to show."""
-    answers_list = [item[attr]]
-    # Insert the correct answer first
-
-    while len(answers_list) < 3:
-        state = random.choice(states_list)
-
-        if not state[attr] in answers_list:
-            answers_list.append(state[attr])
-
-    random.shuffle(answers_list)
-    return answers_list
 
 def make_got_question():
     cool_characters = [583, 957, 148, 238, 529, 1052, 27, 565, 271]
@@ -193,14 +94,75 @@ def make_got_question():
         x.append(answer)
     return x
 
+def make_genknow_question():
+   star_list = []
+   api_url = 'https://opentdb.com/api.php?amount=1&category=9&difficulty=medium&type=boolean'
+   response = requests.get(api_url)
+   if response.status_code == 200:
+       result = json.loads(response.content.decode('utf-8'))
+   else:
+       return None
+   if result is not None:
+       for x in result['results']:
+           # print(x['name'], x['height'], x['hair_color'])
+           del x['category'], x['type'], x['difficulty'], x['incorrect_answers']
+           star_list.append(x['question'])
+           star_list.append(x['correct_answer'])
+   else:
+       print('[!] Request Failed')
+   return star_list
+
+def make_hp_question():
+    return ""
+
 def get_item(attr):
     """Get matching data object from slot value."""
     if attr["current_theme"] == "game of thrones" or attr["current_theme"] == "got" or attr["current_theme"] == "a song of ice and fire":
         return make_got_question()
+    elif attr["current_theme"] == "general knowledge":
+        return make_genknow_question()
+    elif attr["current_theme"] == "harry potter":
+        return make_hp_question()
     elif attr["current_theme"] == "star wars":
-        return ["STAR WARS QUESTION", "ANSWER"]
+        return ["STAR WARS", "ANSWER"]
     else:
         return ["NO THEME FOUND", "ANSWER"]
+
+
+def get_question(item):
+    if item is not None:
+        question = item[0]
+    else:
+        question = "QUESTION HERE!"
+
+    return question
+
+
+def get_answer(attr, item):
+    """Return response text for correct answer to the user."""
+    if attr.lower() == "abbreviation":
+        return ("The {} of {} is "
+                "<say-as interpret-as='spell-out'>{}</say-as>. ").format(
+            __get_attr_for_speech(attr), item["state"], item["abbreviation"])
+    else:
+        return "The {} of {} is {}. ".format(
+            __get_attr_for_speech(attr), item["state"], item[attr.lower()])
+
+
+def get_multiple_choice_answers(item, attr, states_list):
+    """Return multiple choices for the display to show."""
+    answers_list = [item[attr]]
+    # Insert the correct answer first
+
+    while len(answers_list) < 3:
+        state = random.choice(states_list)
+
+        if not state[attr] in answers_list:
+            answers_list.append(state[attr])
+
+    random.shuffle(answers_list)
+    return answers_list
+
 
 def compare_token_or_slots(handler_input, value):
     """Compare value with slots or token,
@@ -210,15 +172,6 @@ def compare_token_or_slots(handler_input, value):
     else:
         return compare_slots(
             handler_input.request_envelope.request.intent.slots, value)
-
-
-def compare_slots(slots, value):
-    """Compare slot value to the value provided."""
-    for _, slot in six.iteritems(slots):
-        if slot.value is not None:
-            return slot.value.lower() == value.lower()
-    else:
-        return False
 
 
 def get_recipient(attr):
@@ -242,7 +195,7 @@ def generate_forfeit(attr, player):
             newplayer = random.choice(players)
             while newplayer != player:
                 newplayer = random.choice(players)
-            return "Add some of {}'s drink to yours and take a drink."
+            return "{}, add some of {}'s drink to yours and take a drink.".format(player, newplayer)
     else:
         if attr["player_no"] < 2:
             no = random.randint(1,4)
@@ -251,4 +204,4 @@ def generate_forfeit(attr, player):
             newplayer = random.choice(players)
             while newplayer != player:
                 newplayer = random.choice(players)
-            return "{}, come up with a truth or dare for {}."
+            return "{}, come up with a truth or dare for {}.".format(newplayer, player)

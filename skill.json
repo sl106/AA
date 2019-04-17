@@ -25,7 +25,7 @@
     "apis": {
       "custom": {
         "endpoint": {
-          "sourceDir": "lambda/py",
+          "sourceDir": "lambda/py/lambda_upload",
           "uri": "ask-custom-Alexa_Anonymous-default"
         }
       }

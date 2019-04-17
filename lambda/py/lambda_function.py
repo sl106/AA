@@ -189,40 +189,6 @@ class NewThemeHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
-class DefinitionHandler(AbstractRequestHandler):
-    """Handler for providing states info to the users.
-
-    This handler is triggered when the QUIZ is not started and the
-    user asks for a specific state, capital, statehood order, statehood
-    year or abbreviation. Similar to the quiz handler, the information
-    is added to the Card or the RenderTemplate after checking if that
-    is supported.
-    """
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        attr = handler_input.attributes_manager.session_attributes
-        return (is_intent_name("AnswerIntent")(handler_input) and
-                attr.get("state") != "QUIZ")
-
-    def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
-        logger.info("In DefinitionHandler")
-        response_builder = handler_input.response_builder
-        item, is_resolved = util.get_item(
-            slots=handler_input.request_envelope.request.intent.slots,
-            states_list=data.STATES_LIST)
-
-        if is_resolved:
-                response_builder.speak(
-                util.get_speech_description(item)).ask(data.REPROMPT_SPEECH)
-
-        else:
-            response_builder.speak(
-                util.get_bad_answer(item)).ask(util.get_bad_answer(item))
-
-        return response_builder.response
-
-
 class QuizAnswerHandler(AbstractRequestHandler):
     """Handler for answering the quiz.
 
@@ -474,8 +440,3 @@ sb.add_global_response_interceptor(ResponseLogger())
 
 # Expose the lambda handler to register in AWS Lambda.
 lambda_handler = sb.lambda_handler()
-
-
-from alexa.util import make_got_question
-from alexa.util import get_question
-print(get_question(make_got_question()))
