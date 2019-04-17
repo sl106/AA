@@ -254,24 +254,25 @@ STATES_LIST = [
 
 SKILL_TITLE = "United States Quiz Game"
 
-WELCOME_MESSAGE = ("Welcome to the United States Quiz Game!  "
-                   "You can ask me about any of the "
-                   "fifty states and their capitals, or you can ask me to "
-                   "start a quiz.  What would you like to do? ")
+WELCOME_MESSAGE = ("Welcome to that drinking game! How many players are playing?")
 
-START_QUIZ_MESSAGE = ("OK.  I will ask you 10 questions about the "
-                      "United States. ")
+START_QUIZ_MESSAGE = ("Let's begin! Which theme would you like for round ")
 
-EXIT_SKILL_MESSAGE = ("Thank you for playing the United States Quiz Game!  "
-                      "Let's play again soon!")
+NEXT_THEME_MESSAGE = "Okay! Time for round "
+
+LIST_THEMES = ("The themes to choose from are: "
+                "Game of Thrones, "
+                "or Star Wars.")
+
+EXIT_SKILL_MESSAGE = ("Thank you for playing that drinking game. Hope you have a good night!")
 
 REPROMPT_SPEECH = "Which other state or capital would you like to know about?"
 
-HELP_MESSAGE = ("I know lots of things about the United States.  "
-                "You can ask me about a state "
-                "or a capital, and I'll tell you what I know.  "
-                "You can also test your knowledge by asking me to start "
-                "a quiz.  What would you like to do? ")
+REPROMPT_PLAYERNO = "How many players are playing today?"
+
+GET_PLAYERNAME = "Who is player "
+
+HELP_MESSAGE = ("HELP MESSAGE HERE")
 
 CORRECT_SPEECHCONS = ['Booya', 'All righty', 'Bam', 'Bazinga', 'Bingo',
                       'Boom', 'Bravo', 'Cha Ching', 'Cheers', 'Dynomite',

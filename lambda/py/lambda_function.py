@@ -44,7 +44,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         logger.info("In LaunchRequestHandler")
         handler_input.response_builder.speak(data.WELCOME_MESSAGE).ask(
-            data.HELP_MESSAGE)
+            data.REPROMPT_PLAYERNO)
         return handler_input.response_builder.response
 
 
@@ -95,6 +95,68 @@ class ExitIntentHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
+class PlayerNumberIntentHandler(AbstractRequestHandler):
+    """Handler for providing the number of players playing"""
+
+    def can_handle(self, handler_input):
+        #type: (HandlerInput) -> bool
+        return is_intent_name("PlayerNumberIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In PlayerNumberIntentHandler")
+        attr = handler_input.attributes_manager.session_attributes
+
+        attr["player_no"] = handler_input.request_envelope.request.intent.slots["player_number"].value
+        attr["players_collected"] = 0
+        attr["player_names"] = []
+
+        handler_input.response_builder.speak(
+            data.GET_PLAYERNAME + "1?").ask(data.GET_PLAYERNAME + "1?").set_should_end_session(False)
+        return handler_input.response_builder.response
+
+
+class PlayerNameIntentHandler(AbstractRequestHandler):
+    """Handler for collecting the names of the players playing"""
+
+    def can_handle(self, handler_input):
+        #type: (HandlerInput) -> bool
+        return is_intent_name("PlayerNameIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In PlayerNumberIntentHandler")
+        attr = handler_input.attributes_manager.session_attributes
+
+        attr["players_collected"] = int(attr["players_collected"]) + 1
+        attr["player_names"].append(handler_input.request_envelope.request.intent.slots["player_name"].value)
+
+        if int(attr["players_collected"]) == int(attr["player_no"]):
+            attr["round_no"] = 1
+            text = data.START_QUIZ_MESSAGE + str(attr["round_no"]) + "? " + data.LIST_THEMES
+            handler_input.response_builder.speak(text).ask(text)
+        else:
+            current = int(attr["players_collected"])
+            current += 1
+            current = str(current)
+            handler_input.response_builder.speak(data.GET_PLAYERNAME + current + "?").ask(data.GET_PLAYERNAME + current + "?")
+
+        return handler_input.response_builder.response
+
+
+class ThemeOptionIntentHandler(AbstractRequestHandler):
+    """Handler to select the theme option for the round"""
+
+    def can_handle(self, handler_input):
+        #type: (HandlerInput) -> bool
+        return is_intent_name("ThemeOptionIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In ThemeOptionIntentHandler")
+        attr = handler_input.attributes_manager.session_attributes
+
+
 class QuizHandler(AbstractRequestHandler):
     """Handler for starting a quiz.
 
@@ -121,41 +183,6 @@ class QuizHandler(AbstractRequestHandler):
         response_builder = handler_input.response_builder
         response_builder.speak(data.START_QUIZ_MESSAGE + question)
         response_builder.ask(question)
-
-        if data.USE_CARDS_FLAG:
-            item = attr["quiz_item"]
-            response_builder.set_card(
-                ui.StandardCard(
-                    title="Question #1",
-                    text=data.START_QUIZ_MESSAGE + question,
-                    image=ui.Image(
-                        small_image_url=util.get_small_image(item),
-                        large_image_url=util.get_large_image(item)
-                    )))
-
-        if util.supports_display(handler_input):
-            item = attr["quiz_item"]
-            item_attr = attr["quiz_attr"]
-            title = "Question #{}".format(str(attr["counter"]))
-            background_img = Image(
-                sources=[ImageInstance(
-                    url=util.get_image(
-                        ht=1024, wd=600, label=item["abbreviation"]))])
-            item_list = []
-            for ans in util.get_multiple_choice_answers(
-                    item, item_attr, data.STATES_LIST):
-                item_list.append(ListItem(
-                    token=ans,
-                    text_content=get_plain_text_content(primary_text=ans)))
-
-            response_builder.add_directive(
-                RenderTemplateDirective(
-                    ListTemplate1(
-                        token="Question",
-                        back_button=BackButtonBehavior.HIDDEN,
-                        background_image=background_img,
-                        title=title,
-                        list_items=item_list)))
 
         return response_builder.response
 
@@ -184,31 +211,7 @@ class DefinitionHandler(AbstractRequestHandler):
             states_list=data.STATES_LIST)
 
         if is_resolved:
-            if data.USE_CARDS_FLAG:
-                response_builder.set_card(
-                    ui.StandardCard(
-                        title=util.get_card_title(item),
-                        text=util.get_card_description(item),
-                        image=ui.Image(
-                            small_image_url=util.get_small_image(item),
-                            large_image_url=util.get_large_image(item)
-                        )))
-
-            if util.supports_display(handler_input):
-                img = Image(
-                    sources=[ImageInstance(url=util.get_large_image(item))])
-                title = util.get_card_title(item)
-                primary_text = get_plain_text_content(
-                    primary_text=util.get_card_description(item))
-
-                response_builder.add_directive(
-                    RenderTemplateDirective(
-                        BodyTemplate2(
-                            back_button=BackButtonBehavior.VISIBLE,
-                            image=img, title=title,
-                            text_content=primary_text)))
-
-            response_builder.speak(
+                response_builder.speak(
                 util.get_speech_description(item)).ask(data.REPROMPT_SPEECH)
 
         else:
@@ -454,6 +457,9 @@ sb.add_request_handler(QuizHandler())
 sb.add_request_handler(DefinitionHandler())
 sb.add_request_handler(QuizAnswerHandler())
 sb.add_request_handler(QuizAnswerElementSelectedHandler())
+sb.add_request_handler(PlayerNumberIntentHandler())
+sb.add_request_handler(PlayerNameIntentHandler())
+sb.add_request_handler(ThemeOptionIntentHandler())
 sb.add_request_handler(RepeatHandler())
 sb.add_request_handler(HelpIntentHandler())
 sb.add_request_handler(ExitIntentHandler())

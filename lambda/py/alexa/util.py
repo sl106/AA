@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 """Utility module to generate text for commonly used responses."""
 
@@ -212,3 +211,7 @@ def compare_slots(slots, value):
     else:
         return False
 
+
+def get_recipient(attr):
+    """Generate the player to ask a question to."""
+    return random.choice(attr["player_names"])
