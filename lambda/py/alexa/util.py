@@ -3,11 +3,11 @@
 
 import random
 import six
-from ask_sdk_core.handler_input import HandlerInput
-from ask_sdk_core.utils import is_request_type
 import requests
 import json
 import random
+from ask_sdk_core.handler_input import HandlerInput
+from ask_sdk_core.utils import is_request_type
 
 from . import data
 
@@ -101,8 +101,11 @@ def __get_attr_for_speech(attr):
     return attr.lower().replace("_", " ").strip()
 
 
-def get_question(attr, item):
-    question = item.keys()[0]
+def get_question(item):
+    if item is not None:
+        question = item[0]
+    else:
+        question = "QUESTION HERE!"
 
     return question
 
@@ -149,20 +152,23 @@ def make_got_question():
     response = response.text
     response_data = json.loads(response)
     choose_random = random.randint(0, 4)
-    x = {}
+    x = []
     if choose_random == 0:
         answer = response_data["playedBy"]
         if answer != "[]":
-            x["Who plays " + response_data["name"] + "?"] = answer
+            x.append("Who plays " + response_data["name"] + "?")
+            x.append(answer)
     elif choose_random == 1:
         answer = response_data["name"]
         if answer != "[]":
-            x["Which character goes by the following aliases: " + str(response_data["aliases"]) + "?"] = answer
+            x.append("Which character goes by the following aliases: " + str(response_data["aliases"]) + "?")
+            x.append(answer)
     elif choose_random == 2:
         answer = response_data["titles"]
         if answer == "[]":
             answer = "None"
-        x["What are the titles of " + str(response_data["name"]) + ", if any?"] = answer
+        x.append("What are the titles of " + str(response_data["name"]) + ", if any?")
+        x.append(answer)
     elif choose_random == 3:
         answer = response_data["father"]
         if not answer:
@@ -172,7 +178,8 @@ def make_got_question():
             new_response = new_response.text
             new_data = json.loads(new_response)
             answer = new_data["name"]
-        x["Who is the father of " + str(response_data["name"]) + ", if any?"] = answer
+        x.append("Who is the father of " + str(response_data["name"]) + ", if any?")
+        x.append(answer)
     elif choose_random == 4:
         answer = response_data["mother"]
         if not answer:
@@ -182,16 +189,18 @@ def make_got_question():
             new_response = new_response.text
             new_data = json.loads(new_response)
             answer = new_data["name"]
-        x["Who is the mother of " + str(response_data["name"]) + ", if any?"] = answer
+        x.append("Who is the mother of " + str(response_data["name"]) + ", if any?")
+        x.append(answer)
     return x
 
-def get_item(slots, states_list):
+def get_item(attr):
     """Get matching data object from slot value."""
-    if attr["current_theme"] == "Game of Thrones":
+    if attr["current_theme"] == "game of thrones" or attr["current_theme"] == "got" or attr["current_theme"] == "a song of ice and fire":
         return make_got_question()
-    elif attr["current_theme"] == "Star Wars":
-        #here
-        return None
+    elif attr["current_theme"] == "star wars":
+        return ["STAR WARS QUESTION", "ANSWER"]
+    else:
+        return ["NO THEME FOUND", "ANSWER"]
 
 def compare_token_or_slots(handler_input, value):
     """Compare value with slots or token,
@@ -215,3 +224,31 @@ def compare_slots(slots, value):
 def get_recipient(attr):
     """Generate the player to ask a question to."""
     return random.choice(attr["player_names"])
+
+
+def generate_forfeit(attr, player):
+    players = attr["player_names"]
+    choice = random.uniform(0,1)
+    if choice <= 0.45:
+        no = random.randint(1,4)
+        return "{}, drink {} many drinks.".format(player, no)
+    elif choice <= 0.55:
+        return "{}, finish your drink.".format(player)
+    elif choice <= 0.75:
+        if attr["player_no"] < 2:
+            no = random.randint(1,4)
+            return "{}, drink {} many drinks.".format(player, no)
+        else :
+            newplayer = random.choice(players)
+            while newplayer != player:
+                newplayer = random.choice(players)
+            return "Add some of {}'s drink to yours and take a drink."
+    else:
+        if attr["player_no"] < 2:
+            no = random.randint(1,4)
+            return "{}, drink {} many drinks.".format(player, no)
+        else :
+            newplayer = random.choice(players)
+            while newplayer != player:
+                newplayer = random.choice(players)
+            return "{}, come up with a truth or dare for {}."

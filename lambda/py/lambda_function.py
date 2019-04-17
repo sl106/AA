@@ -155,15 +155,14 @@ class ThemeOptionIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         logger.info("In ThemeOptionIntentHandler")
         attr = handler_input.attributes_manager.session_attributes
-        attr["current_theme"] = handler_input.request_envelope.request.intent.slots["theme"].value
+        attr["current_theme"] = handler_input.request_envelope.request.intent.slots["theme"].value.lower()
         attr["current_qno"] = 1
 
         playername = util.get_recipient(attr)
+        attr["current_player"] = playername
 
-        #TODO: EDIT HOW TO GENERATE QUESTION
-        #item = util.get_item()
-        #question = util.get_question(attr["current_qno"],attr,item)
-        question = "QUESTION HERE!"
+        attr["quiz_item"] = util.get_item(attr)
+        question = util.get_question(attr["quiz_item"])
         question_text = playername + ", " + question
         handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question)
 
@@ -229,12 +228,8 @@ class QuizAnswerHandler(AbstractRequestHandler):
 
     The ``handle`` method will check if the answer specified is correct,
     by checking if it matches with the corresponding session attribute
-    value. According to the type of answer, alexa responds to the user
-    with either the next question or the final score.
-
-    Similar to the quiz handler, the question choices are
-    added to the Card or the RenderTemplate after checking if that
-    is supported.
+    value. According to answer, alexa responds to the user
+    with either the next question, next round or a forfeit.
     """
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
@@ -479,4 +474,8 @@ sb.add_global_response_interceptor(ResponseLogger())
 
 # Expose the lambda handler to register in AWS Lambda.
 lambda_handler = sb.lambda_handler()
-print("hi")
+
+
+from alexa.util import make_got_question
+from alexa.util import get_question
+print(get_question(make_got_question()))

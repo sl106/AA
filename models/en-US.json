@@ -170,6 +170,48 @@
           ]
         }
       ]
-    }
+    },
+    "dialog": {
+      "intents": [
+          {
+              "name": "ThemeOptionIntent",
+              "confirmationRequired": false,
+              "prompts": {},
+              "slots": [
+                  {
+                      "name": "theme",
+                      "type": "THEME_OPTION",
+                      "confirmationRequired": false,
+                      "elicitationRequired": false,
+                      "prompts": {},
+                      "validations": [
+                          {
+                              "type": "isInSet",
+                              "prompt": "Slot.Validation.994622755241.1243453430094.1063438581692",
+                              "values": [
+                                  "Game of Thrones",
+                                  "Star Wars",
+                                  "got",
+                                  "A song of Ice and Fire"
+                              ]
+                          }
+                      ]
+                  }
+              ]
+          }
+      ],
+      "delegationStrategy": "ALWAYS"
+    },
+    "prompts": [
+        {
+            "id": "Slot.Validation.994622755241.1243453430094.1063438581692",
+            "variations": [
+                {
+                    "type": "PlainText",
+                    "value": "Sorry, that theme is unavailable. What theme would you like?"
+                }
+            ]
+        }
+    ]
   }
 }
