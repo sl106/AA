@@ -98,6 +98,14 @@
                         {
                             "name": "other_ans",
                             "type": "AMAZON.SearchQuery"
+                        },
+                        {
+                            "name": "actors",
+                            "type": "AMAZON.Actor"
+                        },
+                        {
+                            "name": "game_char",
+                            "type": "Got_char"
                         }
                     ],
                     "samples": [
@@ -407,6 +415,106 @@
                         {
                             "name": {
                                 "value": "false"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Got_char",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "Margaery Tyrell"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Davos Seaworth"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Melisandre"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Robb Stark"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Jorah Mormont"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Theon Greyjoy"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Stannis Baratheon"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Brienne of Tarth"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Eddard Stark"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Petyr Baelish"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Daenerys Targaryen"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Joffrey Baratheon"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Tywin Lannister"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Tyrion Lannister"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Jaime Lannister"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Cersei Lannister"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Arya Stark"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Sansa Stark"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "Jon Snow"
                             }
                         }
                     ]
