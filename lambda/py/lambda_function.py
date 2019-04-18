@@ -284,6 +284,7 @@ class RepeatHandler(AbstractRequestHandler):
         if attr["status"] == "question":
             question = util.get_question(attr["quiz_item"])
             response_builder.speak(question).ask(attr["current_player"] + ", do you have an answer? The question was: " + question)
+            return response_builder.response
         elif "recent_response" in attr:
             cached_response_str = json.dumps(attr["recent_response"])
             cached_response = DefaultSerializer().deserialize(
