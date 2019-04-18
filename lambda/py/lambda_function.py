@@ -203,69 +203,6 @@ class NewThemeHandler(AbstractRequestHandler):
         return handler_input.response_builder.response
 
 
-class QuizAnswerHandler(AbstractRequestHandler):
-    """Handler for answering the quiz.
-    The ``handle`` method will check if the answer specified is correct,
-    by checking if it matches with the corresponding session attribute
-    value. According to answer, alexa responds to the user
-    with either the next question, next round or a forfeit.
-    """
-
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        attr = handler_input.attributes_manager.session_attributes
-        return (not is_intent_name("NewThemeIntent")(handler_input) and
-                not is_intent_name("AMAZON.CancelIntent")(handler_input) and
-                not is_intent_name("AMAZON.StopIntent")(handler_input) and
-                not is_intent_name("AMAZON.PauseIntent")(handler_input) and
-                not is_intent_name("AMAZON.HelpIntent")(handler_input) and
-                attr.get("status") == "question")
-
-    def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
-        logger.info("In QuizAnswerHandler")
-        attr = handler_input.attributes_manager.session_attributes
-        response_builder = handler_input.response_builder
-
-        item = attr["quiz_item"]
-        user_ans = handler_input.request_envelope.request.intent.slots
-
-        if util.check_answer(user_ans, item[1]):
-            speech = util.get_speechcon(correct_answer=True)
-            task = util.generate_task(attr, attr["current_player"])
-        else:
-            speech = util.get_speechcon(correct_answer=False) + "! The answer was " + item[1]
-            task = util.generate_forfeit(attr, attr["current_player"])
-
-        resp = speech + "! " + task
-
-        if attr['current_qno'] < data.MAX_QUESTIONS:
-            # Ask another question
-            attr["current_qno"] = attr["current_qno"] + 1
-            attr["status"] = "question"
-
-            # Generates new player to ask
-            playername = util.get_recipient(attr)
-            attr["current_player"] = playername
-
-            # Generates new question
-            attr["quiz_item"] = util.get_item(attr)
-            question = util.get_question(attr["quiz_item"])
-            question_text = resp + " Time for the next question! " + playername + ", " + question
-            handler_input.response_builder.speak(question_text).ask(
-                playername + ", do you have an answer? The question was: " + question)
-
-            return handler_input.response_builder.response
-        else:
-            # Start new round
-            attr["status"] = "picking theme"
-            attr["round_no"] = attr["round_no"] + 1
-            text = data.NEXT_ROUND_MESSAGE + str(attr["round_no"]) + ". " + data.LIST_THEMES
-            handler_input.response_builder.speak(resp + " " + text).ask(text)
-
-            return handler_input.response_builder.response
-
-
 class UnsureAnswerHandler(AbstractRequestHandler):
     """Handler for when the user doesn't give a definitive answer"""
 
@@ -354,6 +291,69 @@ class FallbackIntentHandler(AbstractRequestHandler):
             data.FALLBACK_ANSWER).ask(data.HELP_MESSAGE)
 
         return handler_input.response_builder.response
+
+
+class QuizAnswerHandler(AbstractRequestHandler):
+    """Handler for answering the quiz.
+
+    The ``handle`` method will check if the answer specified is correct,
+    by checking if it matches with the corresponding session attribute
+    value. According to answer, alexa responds to the user
+    with either the next question, next round or a forfeit.
+    """
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        attr = handler_input.attributes_manager.session_attributes
+        return (not is_intent_name("NewThemeIntent")(handler_input) and
+                not is_intent_name("AMAZON.CancelIntent")(handler_input) and
+                not is_intent_name("AMAZON.StopIntent")(handler_input) and
+                not is_intent_name("AMAZON.PauseIntent")(handler_input) and
+                not is_intent_name("AMAZON.HelpIntent")(handler_input) and
+                not is_intent_name("UnsureIntent")(handler_input) and
+                attr.get("status") == "question")
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In QuizAnswerHandler")
+        attr = handler_input.attributes_manager.session_attributes
+        response_builder = handler_input.response_builder
+
+        item = attr["quiz_item"]
+        user_ans = handler_input.request_envelope.request.intent.slots
+
+        if util.check_answer(user_ans, item[1]):
+            speech = util.get_speechcon(correct_answer=True)
+            task = util.generate_task(attr, attr["current_player"])
+        else:
+            speech = util.get_speechcon(correct_answer=False) + "! The answer was " + item[1]
+            task = util.generate_forfeit(attr, attr["current_player"])
+
+        resp = speech + "! " + task
+
+        if attr['current_qno'] < data.MAX_QUESTIONS:
+            # Ask another question
+            attr["current_qno"] = attr["current_qno"] + 1
+            attr["status"] = "question"
+
+            # Generates new player to ask
+            playername = util.get_recipient(attr)
+            attr["current_player"] = playername
+
+            # Generates new question
+            attr["quiz_item"] = util.get_item(attr)
+            question = util.get_question(attr["quiz_item"])
+            question_text = resp + " Time for the next question! " + playername + ", " + question
+            handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question)
+
+            return handler_input.response_builder.response
+        else:
+            # Start new round
+            attr["status"] = "picking theme"
+            attr["round_no"] = attr["round_no"] + 1
+            text = data.NEXT_ROUND_MESSAGE + str(attr["round_no"]) + ". " + data.LIST_THEMES
+            handler_input.response_builder.speak(resp + " " + text).ask(text)
+
+            return handler_input.response_builder.response
 
 
 # Interceptor classes
