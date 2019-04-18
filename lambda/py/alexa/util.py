@@ -297,16 +297,16 @@ def generate_forfeit(attr, player):
     if choice <= 0.45:
         no = random.randint(1,4)
         if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-        return "{}, drink {} many drinks.".format(player, no)
+            return "{}, drink {} drink.".format(player, no)
+        return "{}, drink {} drinks.".format(player, no)
     elif choice <= 0.55:
         return "{}, finish your drink.".format(player)
     elif choice <= 0.75:
         if len(players) < 2:
             no = random.randint(1,4)
             if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-            return "{}, drink {} many drinks.".format(player, no)
+                return "{}, drink {} drink.".format(player, no)
+            return "{}, drink {} drinks.".format(player, no)
         else :
             newplayer = random.choice(players)
             while newplayer == player:
@@ -316,8 +316,8 @@ def generate_forfeit(attr, player):
         if len(players) < 2:
             no = random.randint(1,4)
             if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-            return "{}, drink {} many drinks.".format(player, no)
+                return "{}, drink {} drink.".format(player, no)
+            return "{}, drink {} drinks.".format(player, no)
         else :
             newplayer = random.choice(players)
             while newplayer == player:
@@ -331,8 +331,8 @@ def generate_task(attr, player):
         if len(players) < 2:
             no = random.randint(1,4)
             if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-            return "{}, drink {} many drinks.".format(player, no)
+                return "{}, drink {} drink.".format(player, no)
+            return "{}, drink {} drinks.".format(player, no)
         else:
             newplayer = random.choice(players)
             while newplayer == player:
@@ -353,8 +353,8 @@ def generate_task(attr, player):
         if len(players) < 2:
             no = random.randint(1,4)
             if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-            return "{}, drink {} many drinks.".format(player, no)
+                return "{}, drink {} drink.".format(player, no)
+            return "{}, drink {} drinks.".format(player, no)
         else:
             newplayer = random.choice(players)
             while newplayer == player:
