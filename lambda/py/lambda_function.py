@@ -177,7 +177,11 @@ class PlayerNameIntentHandler(AbstractRequestHandler):
         attr = handler_input.attributes_manager.session_attributes
 
         attr["players_collected"] = int(attr["players_collected"]) + 1
-        attr["player_names"].append(handler_input.request_envelope.request.intent.slots["player_name"].value)
+        if is_intent_name("AnswerIntent")(handler_input):
+            name = handler_input.request_envelope.request.intent.slots["other_ans"].value
+        else:
+            name = handler_input.request_envelope.request.intent.slots["player_name"].value
+        attr["player_names"].append(name)
 
         if int(attr["players_collected"]) == int(attr["player_no"]):
             attr["status"] = "picking theme"

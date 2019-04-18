@@ -14,39 +14,6 @@ import datetime
 from . import data
 
 
-def supports_display(handler_input):
-    # type: (HandlerInput) -> bool
-    """Check if display is supported by the skill."""
-    try:
-        if hasattr(
-                handler_input.request_envelope.context.system.device.
-                        supported_interfaces, 'display'):
-            return (
-                    handler_input.request_envelope.context.system.device.
-                    supported_interfaces.display is not None)
-    except:
-        return False
-
-
-def get_bad_answer(item):
-    """Return response text for incorrect answer."""
-    return "{} {}".format(data.BAD_ANSWER.format(item), data.HELP_MESSAGE)
-
-
-def get_current_score(score, counter):
-    """Return the response text for current quiz score of the user."""
-    return data.SCORE.format("current", score, counter)
-
-
-def get_final_score(score, counter):
-    """Return the response text for final quiz score of the user."""
-    return data.SCORE.format("final", score, counter)
-
-
-def __get_attr_for_speech(attr):
-    """Helper function to convert attribute name."""
-    return attr.lower().replace("_", " ").strip()
-
 
 #Game of Thrones
 def make_got_question():
@@ -254,28 +221,13 @@ def get_question(item):
     return question
 
 
-def get_multiple_choice_answers(item, attr, states_list):
-    """Return multiple choices for the display to show."""
-    answers_list = [item[attr]]
-    # Insert the correct answer first
-
-    while len(answers_list) < 3:
-        state = random.choice(states_list)
-
-        if not state[attr] in answers_list:
-            answers_list.append(state[attr])
-
-    random.shuffle(answers_list)
-    return answers_list
-
-
 def check_answer(slots, value):
     """Compare slot value to the value provided."""
     for _, slot in six.iteritems(slots):
         if slot.value is not None:
             return slot.value.lower() == value.lower()
-    else:
-        return False
+        else:
+            return False
 
 def get_speechcon(correct_answer):
     """Return speechcon corresponding to the boolean answer correctness."""

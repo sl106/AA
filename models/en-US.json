@@ -101,7 +101,6 @@
                         }
                     ],
                     "samples": [
-                        "  {other_ans}",
                         "yes {other_ans}",
                         "umm {other_ans}",
                         "hmm {other_ans}",
