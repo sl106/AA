@@ -526,7 +526,7 @@ capitals_data = [
         "city": "Ciudad de M"
     },
     {
-        "country": "Micronesia, Federated States of",
+        "country": "Federated States of Micronesia",
         "city": "Palikir"
     },
     {
