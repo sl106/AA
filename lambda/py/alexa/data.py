@@ -7,7 +7,7 @@ START_QUIZ_MESSAGE = ("I've been told to tell you to drink responsibly. Let's be
 SINGLE_PLAYER_MESSAGE = ("Are you sure you want to play by yourself? "
                         "<prosody pitch=\"x-high\">Alexa, this is so sad, play despacito.</prosody> <break time=\"2s\"/>"
                         "<voice name=\"Celine\"><lang xml:lang=\"fr-FR\">Joking!</lang></voice> "
-                        "<emphasis level="strong">Last chance though,</emphasis> "
+                        "<emphasis level="strong">Last chance though,</emphasis> ")
 
 NEXT_ROUND_MESSAGE = "Okay! Time for round "
 
