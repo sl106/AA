@@ -128,6 +128,7 @@ class PlayerNumberIntentHandler(AbstractRequestHandler):
         attr["player_no"] = handler_input.request_envelope.request.intent.slots["player_number"].value
         attr["checked_single_player"] = False
         if int(attr["player_no"]) == 1 and not attr["checked_single_player"]:
+            attr["checked_single_player"] = True
             handler_input.response_builder.speak(
                 data.SINGLE_PLAYER_MESSAGE + data.REPROMPT_PLAYERNO.format(util.this_time_of_the_day())).ask(data.REPROMPT_PLAYERNO.format(util.this_time_of_the_day()))
         else:
@@ -280,7 +281,10 @@ class RepeatHandler(AbstractRequestHandler):
         logger.info("In RepeatHandler")
         attr = handler_input.attributes_manager.session_attributes
         response_builder = handler_input.response_builder
-        if "recent_response" in attr:
+        if attr["status"] == "question":
+            question = util.get_question(attr["quiz_item"])
+            response_builder.speak(question).ask(attr["current_player"] + ", do you have an answer? The question was: " + question)
+        elif "recent_response" in attr:
             cached_response_str = json.dumps(attr["recent_response"])
             cached_response = DefaultSerializer().deserialize(
                 cached_response_str, Response)
@@ -308,6 +312,7 @@ class QuizAnswerHandler(AbstractRequestHandler):
                 not is_intent_name("AMAZON.PauseIntent")(handler_input) and
                 not is_intent_name("AMAZON.HelpIntent")(handler_input) and
                 not is_intent_name("UnsureIntent")(handler_input) and
+                not is_intent_name("AMAZON.FallbackIntent")(handler_input) and
                 attr.get("status") == "question")
 
     def handle(self, handler_input):
@@ -367,8 +372,36 @@ class FallbackIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In FallbackIntentHandler")
-        handler_input.response_builder.speak(
-            data.FALLBACK_ANSWER).ask(data.HELP_MESSAGE)
+
+        if attr["status"] == "question":
+            message = "Sorry, I didn't understand that. We'll move on. "
+
+            if attr['current_qno'] < data.MAX_QUESTIONS:
+                # Ask another question
+                attr["current_qno"] = attr["current_qno"] + 1
+                attr["status"] = "question"
+
+                # Generates new player to ask
+                playername = util.get_recipient(attr)
+                attr["current_player"] = playername
+
+                # Generates new question
+                attr["quiz_item"] = util.get_item(attr)
+                question = util.get_question(attr["quiz_item"])
+                question_text = message + " Time for the next question! " + playername + ", " + question
+                handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question)
+
+                return handler_input.response_builder.response
+            else:
+                # Start new round
+                attr["status"] = "picking theme"
+                attr["round_no"] = attr["round_no"] + 1
+                text = data.NEXT_ROUND_MESSAGE + str(attr["round_no"]) + ". " + data.LIST_THEMES
+                handler_input.response_builder.speak(message + " " + text).ask(text)
+
+        else:
+            handler_input.response_builder.speak(
+                data.FALLBACK_ANSWER).ask(data.HELP_MESSAGE)
 
         return handler_input.response_builder.response
 

@@ -91,6 +91,10 @@
                       {
                           "name": "boolean",
                           "type": "TF"
+                      },
+                      {
+                          "name": "other",
+                          "type": "AMAZON.LITERAL"
                       }
                   ],
                   "samples": [
