@@ -49,7 +49,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         if util.time_of_the_day() == "morning":
             message += "Damn, isn't it a bit early to be drinking? No judgement here though. "
         elif util.time_of_the_day() == "afternoon":
-            message += "Now day drinking is something I can get behind!"
+            message += "Now day drinking is something I can get behind! "
         elif util.time_of_the_day() == "evening":
             message += "Let's partaaayyyy! "
         else:
@@ -136,8 +136,7 @@ class PlayerNumberIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return ((is_intent_name("PlayerNumberIntent")(handler_input) or
-                is_intent_name("AnswerIntent")(handler_input)) and
+        return (is_intent_name("PlayerNumberIntent")(handler_input) and
                 attr.get("status") == "player number")
 
     def handle(self, handler_input):
@@ -167,8 +166,7 @@ class PlayerNameIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return ((is_intent_name("PlayerNameIntent")(handler_input) or
-                is_intent_name("AnswerIntent")(handler_input)) and
+        return (is_intent_name("PlayerNameIntent")(handler_input) and
                 attr.get("status") == "collecting names")
 
     def handle(self, handler_input):
@@ -204,8 +202,7 @@ class ThemeOptionIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return ((is_intent_name("ThemeOptionIntent")(handler_input) or
-                is_intent_name("AnswerIntent")(handler_input)) and
+        return (is_intent_name("ThemeOptionIntent")(handler_input) and
                 attr.get("status") == "picking theme")
 
     def handle(self, handler_input):
@@ -223,7 +220,7 @@ class ThemeOptionIntentHandler(AbstractRequestHandler):
         question = util.get_question(attr["quiz_item"])
         question_text = playername + ", " + question
         handler_input.response_builder.speak(question_text).ask(
-            playername + ", do you have an answer? The question was: " + question)
+            playername + ", do you have an answer? The question was: " + question).set_should_end_session(False)
 
         return handler_input.response_builder.response
 
@@ -311,7 +308,7 @@ class RepeatHandler(AbstractRequestHandler):
         response_builder = handler_input.response_builder
         if attr["status"] == "question":
             question = util.get_question(attr["quiz_item"])
-            response_builder.speak(question).ask(attr["current_player"] + ", <emphasis level=\"strong\"> do you have an answer?  The question was: </emphasis>" + question)
+            response_builder.speak(question).ask(attr["current_player"] + ", <emphasis level=\"strong\"> do you have an answer?  The question was: </emphasis>" + question).set_should_end_session(False)
             return response_builder.response
         elif "recent_response" in attr:
             cached_response_str = json.dumps(attr["recent_response"])
@@ -335,14 +332,15 @@ class QuizAnswerHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return (not is_intent_name("NewThemeIntent")(handler_input) and
+        return (((not is_intent_name("NewThemeIntent")(handler_input) and
                 not is_intent_name("AMAZON.CancelIntent")(handler_input) and
                 not is_intent_name("AMAZON.StopIntent")(handler_input) and
                 not is_intent_name("AMAZON.PauseIntent")(handler_input) and
                 not is_intent_name("AMAZON.HelpIntent")(handler_input) and
                 not is_intent_name("UnsureIntent")(handler_input) and
                 not is_intent_name("AMAZON.FallbackIntent")(handler_input) and
-                not is_intent_name("AMAZON.RepeatIntent") and
+                not is_intent_name("AMAZON.RepeatIntent")) or
+                is_intent_name("AnswerIntent")) and
                 attr.get("status") == "question")
 
     def handle(self, handler_input):
@@ -375,8 +373,8 @@ class QuizAnswerHandler(AbstractRequestHandler):
             # Generates new question
             attr["quiz_item"] = util.get_item(attr)
             question = util.get_question(attr["quiz_item"])
-            question_text = resp + " <break time = \'1s \'>Time for the next question! </break>" + playername + ", " + question
-            handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question)
+            question_text = resp + " <break time = \"1s\"/>Time for the next question! " + playername + ", " + question
+            handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question).set_should_end_session(False)
 
             return handler_input.response_builder.response
         else:
@@ -384,7 +382,7 @@ class QuizAnswerHandler(AbstractRequestHandler):
             attr["status"] = "picking theme"
             attr["round_no"] = attr["round_no"] + 1
             text = data.NEXT_ROUND_MESSAGE + str(attr["round_no"]) + ". " + data.LIST_THEMES
-            handler_input.response_builder.speak(resp + " " + text).ask(text)
+            handler_input.response_builder.speak(resp + " " + text).ask(text).set_should_end_session(False)
 
             return handler_input.response_builder.response
 
@@ -402,6 +400,7 @@ class FallbackIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In FallbackIntentHandler")
+        attr = handler_input.attributes_manager.session_attributes
 
         if attr["status"] == "question":
             message = "Sorry, I didn't understand that. We'll move on. "
@@ -419,7 +418,7 @@ class FallbackIntentHandler(AbstractRequestHandler):
                 attr["quiz_item"] = util.get_item(attr)
                 question = util.get_question(attr["quiz_item"])
                 question_text = message + " Time for the next question! " + playername + ", " + question
-                handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question)
+                handler_input.response_builder.speak(question_text).ask(playername + ", do you have an answer? The question was: " + question).set_should_end_session(False)
 
                 return handler_input.response_builder.response
             else:
@@ -427,7 +426,7 @@ class FallbackIntentHandler(AbstractRequestHandler):
                 attr["status"] = "picking theme"
                 attr["round_no"] = attr["round_no"] + 1
                 text = data.NEXT_ROUND_MESSAGE + str(attr["round_no"]) + ". " + data.LIST_THEMES
-                handler_input.response_builder.speak(message + " " + text).ask(text)
+                handler_input.response_builder.speak(message + " " + text).ask(text).set_should_end_session(False)
 
         else:
             handler_input.response_builder.speak(

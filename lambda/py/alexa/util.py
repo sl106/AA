@@ -226,8 +226,8 @@ def check_answer(slots, value):
     for _, slot in six.iteritems(slots):
         if slot.value is not None:
             return slot.value.lower() == value.lower()
-        else:
-            return False
+    else:
+        return False
 
 def get_speechcon(correct_answer):
     """Return speechcon corresponding to the boolean answer correctness."""
