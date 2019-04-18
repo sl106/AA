@@ -1,4 +1,3 @@
-
 """Utility module to generate text for commonly used responses."""
 
 import random
@@ -10,6 +9,7 @@ import csv
 import capitals
 from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_core.utils import is_request_type
+import datetime
 
 from . import data
 
@@ -360,3 +360,17 @@ def generate_task(attr, player):
             while newplayer == player:
                 newplayer = random.choice(players)
             return "{}, come up with a truth or dare for {}.".format(player, newplayer)
+
+
+def time_of_the_day():
+    current_time = datetime.datetime.now().hour
+    int(current_time)
+    print(current_time)
+    if current_time < 12:
+        return 'morning'
+    elif 12 <= current_time < 18:
+        return 'afternoon'
+    elif 18 <= current_time < 21:
+        return 'evening'
+    else:
+        return 'night'
