@@ -209,7 +209,11 @@ class QuizAnswerHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return (is_intent_name("AnswerIntent")(handler_input) and
+        return (not is_intent_name("NewThemeIntent")(handler_input) and
+                not is_intent_name("AMAZON.CancelIntent")(handler_input) and
+                not is_intent_name("AMAZON.StopIntent")(handler_input) and
+                not is_intent_name("AMAZON.PauseIntent")(handler_input)) and
+                not is_intent_name("AMAZON.HelpIntent")(handler_input) and
                 attr.get("status") == "question")
 
     def handle(self, handler_input):
@@ -361,6 +365,20 @@ class CacheResponseForRepeatInterceptor(AbstractResponseInterceptor):
 
 
 # Exception Handler classes
+class CatchInvalidThemeExceptionHandler(AbstractExceptionHandler):
+    """Catch any issues with user selecting an invalid theme handler."""
+    def can_handle(self, handler_input, exception):
+        # type: (HandlerInput, Exception) -> bool
+        attr = handler_input.attributes_manager.session_attributes
+        return attr.get("status") == "picking theme"
+
+    def handle(self, handler_input, exception):
+        # type: (HandlerInput, Exception) -> Response
+        speech = "Sorry, that's not one of the themes available. " + data.LIST_THEMES
+        handler_input.response_builder.speak(speech).ask(data.LIST_THEMES)
+
+        return handler_input.response_builder.response
+
 class CatchAllExceptionHandler(AbstractExceptionHandler):
     """Catch All Exception handler.
 
@@ -411,6 +429,7 @@ sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(FallbackIntentHandler())
 
 # Add exception handler to the skill.
+sb.add_exception_handler(CatchInvalidThemeExceptionHandler())
 sb.add_exception_handler(CatchAllExceptionHandler())
 
 # Add response interceptor to the skill.

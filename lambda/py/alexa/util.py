@@ -110,22 +110,22 @@ def choose_got_question(choose_random, response_data):
 
 #General Knowledge
 def make_genknow_question():
-   star_list = []
-   api_url = 'https://opentdb.com/api.php?amount=1&category=9&difficulty=medium&type=boolean'
-   response = requests.get(api_url)
-   if response.status_code == 200:
-       result = json.loads(response.content.decode('utf-8'))
-   else:
-       return None
-   if result is not None:
-       for x in result['results']:
-           # print(x['name'], x['height'], x['hair_color'])
-           del x['category'], x['type'], x['difficulty'], x['incorrect_answers']
-           star_list.append(x['question'])
-           star_list.append(x['correct_answer'])
-   else:
-       print('[!] Request Failed')
-   return star_list
+    star_list = []
+    api_url = 'https://opentdb.com/api.php?amount=1&category=9&difficulty=medium&type=boolean'
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        result = json.loads(response.content.decode('utf-8'))
+    else:
+        return None
+    if result is not None:
+        for x in result['results']:
+            del x['category'], x['type'], x['difficulty'], x['incorrect_answers']
+            star_list.append(x['question'])
+            star_list.append(x['correct_answer'])
+    else:
+        print('[!] Request Failed')
+    star_list[0] = "True or False: " + star_list[0]
+    return star_list
 
 
 #Harry Potter
@@ -293,12 +293,16 @@ def generate_forfeit(attr, player):
     choice = random.uniform(0,1)
     if choice <= 0.45:
         no = random.randint(1,4)
+        if no == 1:
+                return "{}, drink {} many drink.".format(player, no)
         return "{}, drink {} many drinks.".format(player, no)
     elif choice <= 0.55:
         return "{}, finish your drink.".format(player)
     elif choice <= 0.75:
-        if attr["player_no"] < 2:
+        if len(players) < 2:
             no = random.randint(1,4)
+            if no == 1:
+                return "{}, drink {} many drink.".format(player, no)
             return "{}, drink {} many drinks.".format(player, no)
         else :
             newplayer = random.choice(players)
@@ -308,6 +312,8 @@ def generate_forfeit(attr, player):
     else:
         if len(players) < 2:
             no = random.randint(1,4)
+            if no == 1:
+                return "{}, drink {} many drink.".format(player, no)
             return "{}, drink {} many drinks.".format(player, no)
         else :
             newplayer = random.choice(players)
@@ -319,17 +325,35 @@ def generate_task(attr, player):
     players = attr["player_names"]
     choice = random.uniform(0,1)
     if choice < 0.5:
-        newplayer = random.choice(players)
-        while newplayer == player:
+        if len(players) < 2:
+            no = random.randint(1,4)
+            if no == 1:
+                return "{}, drink {} many drink.".format(player, no)
+            return "{}, drink {} many drinks.".format(player, no)
+        else:
             newplayer = random.choice(players)
+            while newplayer == player:
+                newplayer = random.choice(players)
             no = random.randint(1,3)
-        return "{}, take {} drinks!".format(newplayer, no)
+            if no == 1:
+                return "{}, take {} drink.".format(newplayer, no)
+            return "{}, take {} drinks!".format(newplayer, no)
     elif choice < 0.75:
-        no = random.randint(1,4)
-        return "{}, give out {} drinks.".format(player, no)
+        if len(players) < 2:
+            return "{}, finish your drink!".format(player)
+        else:
+            no = random.randint(1,4)
+            if no == 1:
+                return "{}, give out {} drink.".format(player, no)
+            return "{}, give out {} drinks.".format(player, no)
     else:
-        newplayer = random.choice(players)
-        while newplayer == player:
+        if len(players) < 2:
+            no = random.randint(1,4)
+            if no == 1:
+                return "{}, drink {} many drink.".format(player, no)
+            return "{}, drink {} many drinks.".format(player, no)
+        else:
             newplayer = random.choice(players)
-            no = random.randint(1,3)
-        return "{}, come up with a truth or dare for {}.".format(player, newplayer)
+            while newplayer == player:
+                newplayer = random.choice(players)
+            return "{}, come up with a truth or dare for {}.".format(player, newplayer)
