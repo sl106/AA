@@ -87,11 +87,25 @@ class HelpIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In HelpIntentHandler")
-        handler_input.attributes_manager.session_attributes = {}
-        # Resetting session
+        
+        attr = handler_input.attributes_manager.session_attributes
+        message = data.HELP_MESSAGE
 
-        handler_input.response_builder.speak(
-            data.HELP_MESSAGE).ask(data.HELP_MESSAGE)
+        if not "status" in attr :
+            message = message + " " + data.WELCOME_MESSAGE
+        elif attr["status"] == "question":
+            message = message + " {}, the question was {}".format(attr["current_player"],util.get_question(attr["current_item"]))
+        elif attr["status"] == "player number":
+            message = message + " So, how many players are playing {}?".format(util.this_time_of_the_day())
+        elif attr["status"] == "collecting names":
+            message = message + " So, who is player {}?".format(str(attr["players_collected"] +1))
+        elif attr["status"] == "picking theme":
+            message = message + " " + data.LIST_THEMES
+        else:
+            message = message + data.START_QUIZ_MESSAGE
+
+
+        handler_input.response_builder.speak(message).ask(message)
         return handler_input.response_builder.response
 
 
@@ -122,7 +136,9 @@ class PlayerNumberIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return is_intent_name("PlayerNumberIntent")(handler_input) and attr.get("status") == "player number"
+        return ((is_intent_name("PlayerNumberIntent")(handler_input) or
+                is_intent_name("AnswerIntent")(handler_input)) and
+                attr.get("status") == "player number")
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -130,8 +146,8 @@ class PlayerNumberIntentHandler(AbstractRequestHandler):
         attr = handler_input.attributes_manager.session_attributes
 
         attr["player_no"] = handler_input.request_envelope.request.intent.slots["player_number"].value
-        attr["checked_single_player"] = False
-        if int(attr["player_no"]) == 1 and not attr["checked_single_player"]:
+        
+        if int(attr["player_no"]) == 1 and not ("checked_single_player" in attr):
             attr["checked_single_player"] = True
             handler_input.response_builder.speak(
                 data.SINGLE_PLAYER_MESSAGE + data.REPROMPT_PLAYERNO.format(util.this_time_of_the_day())).ask(data.REPROMPT_PLAYERNO.format(util.this_time_of_the_day()))
@@ -151,7 +167,9 @@ class PlayerNameIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return is_intent_name("PlayerNameIntent")(handler_input) and attr.get("status") == "collecting names"
+        return ((is_intent_name("PlayerNameIntent")(handler_input) or
+                is_intent_name("AnswerIntent")(handler_input)) and
+                attr.get("status") == "collecting names")
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -182,7 +200,9 @@ class ThemeOptionIntentHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return is_intent_name("ThemeOptionIntent")(handler_input) and attr.get("status") == "picking theme"
+        return ((is_intent_name("ThemeOptionIntent")(handler_input) or
+                is_intent_name("AnswerIntent")(handler_input)) and
+                attr.get("status") == "picking theme")
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
@@ -318,6 +338,7 @@ class QuizAnswerHandler(AbstractRequestHandler):
                 not is_intent_name("AMAZON.HelpIntent")(handler_input) and
                 not is_intent_name("UnsureIntent")(handler_input) and
                 not is_intent_name("AMAZON.FallbackIntent")(handler_input) and
+                not is_intent_name("AMAZON.RepeatIntent") and
                 attr.get("status") == "question")
 
     def handle(self, handler_input):
