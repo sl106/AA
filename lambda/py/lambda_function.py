@@ -212,7 +212,7 @@ class QuizAnswerHandler(AbstractRequestHandler):
         return (not is_intent_name("NewThemeIntent")(handler_input) and
                 not is_intent_name("AMAZON.CancelIntent")(handler_input) and
                 not is_intent_name("AMAZON.StopIntent")(handler_input) and
-                not is_intent_name("AMAZON.PauseIntent")(handler_input)) and
+                not is_intent_name("AMAZON.PauseIntent")(handler_input) and
                 not is_intent_name("AMAZON.HelpIntent")(handler_input) and
                 attr.get("status") == "question")
 
