@@ -107,8 +107,12 @@ class ExitIntentHandler(AbstractRequestHandler):
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
         logger.info("In ExitIntentHandler")
-        handler_input.response_builder.speak(
-            data.EXIT_SKILL_MESSAGE.format(util.time_of_the_day)).set_should_end_session(True)
+        if attr["round_no"] < 3:
+            message = "Woah, you only played {} rounds!? Do we have some lightweights here? "
+        else:
+            message = "Good job! I hope you're all boozed up now! "
+        message = message + data.EXIT_SKILL_MESSAGE.format(util.time_of_the_day)
+        handler_input.response_builder.speak(message).set_should_end_session(True)
         return handler_input.response_builder.response
 
 

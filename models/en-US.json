@@ -99,6 +99,12 @@
                   ],
                   "samples": [
                       "{hp_house}",
+                      "{other_ans}",
+                      "how about {other_ans}",
+                      "I think it's {other_ans}",
+                      "it's {other_ans}",
+                      "is it {other_ans}",
+                      "maybe it is {other_ans}",
                       "I think it's {hp_house}",
                       "is it {hp_house}",
                       "{hp_character}",
@@ -200,7 +206,8 @@
                       "not a clue",
                       "I don't know",
                       "not sure",
-                      "I'm not sure"
+                      "I'm not sure",
+                      "dont know"
                   ]
               }
           ],
