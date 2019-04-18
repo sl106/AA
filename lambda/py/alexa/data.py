@@ -15,7 +15,7 @@ LIST_THEMES = ("The themes to choose from are: "
                 "General Knowledge, "
                 "Game of Thrones, "
                 "Harry Potter, "
-                "Star Wars "
+                "Star Wars, "
                 "or Capitals.")
 
 EXIT_SKILL_MESSAGE = ("Thank you for playing that drinking game. Hope you have a good {}!!!")
