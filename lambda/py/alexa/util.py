@@ -365,7 +365,7 @@ def generate_task(attr, player):
 def time_of_the_day():
     current_time = datetime.datetime.now().hour
     int(current_time)
-    if current_time < 12:
+    if 2 <= current_time < 12:
         return 'morning'
     elif 12 <= current_time < 18:
         return 'afternoon'

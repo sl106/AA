@@ -2,7 +2,9 @@
 
 WELCOME_MESSAGE = ("Welcome to that drinking game! How many players are playing?")
 
-START_QUIZ_MESSAGE = ("Let's begin! Which theme would you like for round ")
+START_QUIZ_MESSAGE = ("I've been told to tell you to drink responsibly. Let's begin! Which theme would you like for round ")
+
+SINGLE_PLAYER_MESSAGE = "Are you sure you want to play by yourself? Alexa, this is so sad, play despacito. Joking! Last chance though, "
 
 NEXT_ROUND_MESSAGE = "Okay! Time for round "
 
@@ -13,7 +15,7 @@ LIST_THEMES = ("The themes to choose from are: "
                 "Star Wars "
                 "or Capitals.")
 
-EXIT_SKILL_MESSAGE = ("Thank you for playing that drinking game. Hope you have a good night!")
+EXIT_SKILL_MESSAGE = ("Thank you for playing that drinking game. Hope you have a good {}!")
 
 REPROMPT_SPEECH = "Which other state or capital would you like to know about?"
 
