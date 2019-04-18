@@ -332,16 +332,16 @@ class QuizAnswerHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return ((is_intent_name("AnswerIntent")(handler_input) or 
-                (not is_intent_name("NewThemeIntent")(handler_input) and
+        return is_intent_name("AnswerIntent")(handler_input) or (attr.get("status") == "question" and (
+                not is_intent_name("NewThemeIntent")(handler_input) and
                 not is_intent_name("AMAZON.CancelIntent")(handler_input) and
                 not is_intent_name("AMAZON.StopIntent")(handler_input) and
                 not is_intent_name("AMAZON.PauseIntent")(handler_input) and
                 not is_intent_name("AMAZON.HelpIntent")(handler_input) and
                 not is_intent_name("UnsureIntent")(handler_input) and
                 not is_intent_name("AMAZON.FallbackIntent")(handler_input) and
-                not is_intent_name("AMAZON.RepeatIntent"))) and
-                attr.get("status") == "question")
+                not is_intent_name("AMAZON.RepeatIntent")
+                ))
 
     def handle(self, handler_input):
         # type: (HandlerInput) -> Response
