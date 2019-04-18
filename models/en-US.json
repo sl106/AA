@@ -99,7 +99,6 @@
                   ],
                   "samples": [
                       "{hp_house}",
-                      "{other_ans}",
                       "how about {other_ans}",
                       "I think it's {other_ans}",
                       "it's {other_ans}",
