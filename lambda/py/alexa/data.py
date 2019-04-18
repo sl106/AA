@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-WELCOME_MESSAGE = ("Welcome to that drinking game! How many players are playing?")
+WELCOME_MESSAGE = ("Welcome to that drinking game! ")
 
 START_QUIZ_MESSAGE = ("I've been told to tell you to drink responsibly. Let's begin! Which theme would you like for round ")
 
@@ -19,7 +19,7 @@ EXIT_SKILL_MESSAGE = ("Thank you for playing that drinking game. Hope you have a
 
 REPROMPT_SPEECH = "Which other state or capital would you like to know about?"
 
-REPROMPT_PLAYERNO = "How many players are playing today?"
+REPROMPT_PLAYERNO = "How many players are playing {}?"
 
 GET_PLAYERNAME = "Who is player "
 

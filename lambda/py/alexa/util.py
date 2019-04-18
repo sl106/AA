@@ -373,3 +373,16 @@ def time_of_the_day():
         return 'evening'
     else:
         return 'night'
+
+def this_time_of_the_day():
+    current_time = datetime.datetime.now().hour
+    int(current_time)
+    if 2 <= current_time < 12:
+        return 'this morning'
+    elif 12 <= current_time < 18:
+        return 'this afternoon'
+    elif 18 <= current_time < 21:
+        return 'this evening'
+    else:
+        return 'tonight'
+

@@ -45,8 +45,20 @@ class LaunchRequestHandler(AbstractRequestHandler):
         logger.info("In LaunchRequestHandler")
         attr = handler_input.attributes_manager.session_attributes
         attr["status"] = "player number"
-        handler_input.response_builder.speak(data.WELCOME_MESSAGE).ask(
-            data.REPROMPT_PLAYERNO)
+        message = data.WELCOME_MESSAGE
+        if util.time_of_the_day() == "morning":
+            message += "Damn, isn't it a bit early to be drinking? No judgement here though. "
+        elif util.time_of_the_day() == "afternoon":
+            message += "Now day drinking is something I can get behind. "
+        elif util.time_of_the_day() == "evening":
+            message += "Let's partaaayyyy! "
+        else:
+            message += "As my good friend, Paul, once said: <voice name=\"Joey\"><lang xml:lang=\"en-US\"> Let's get schwasted! </lang></voice> "
+        
+        message = message + data.REPROMPT_PLAYERNO.format(util.this_time_of_the_day())
+
+        handler_input.response_builder.speak(message).ask(
+            data.REPROMPT_PLAYERNO.format(util.this_time_of_the_day()))
         return handler_input.response_builder.response
 
 
@@ -114,10 +126,10 @@ class PlayerNumberIntentHandler(AbstractRequestHandler):
         attr = handler_input.attributes_manager.session_attributes
 
         attr["player_no"] = handler_input.request_envelope.request.intent.slots["player_number"].value
-        attr["checked_single_player"] == False
+        attr["checked_single_player"] = False
         if int(attr["player_no"]) == 1 and not attr["checked_single_player"]:
             handler_input.response_builder.speak(
-                data.SINGLE_PLAYER_MESSAGE + data.REPROMPT_PLAYERNO).ask(data.REPROMPT_PLAYERNO)
+                data.SINGLE_PLAYER_MESSAGE + data.REPROMPT_PLAYERNO.format(util.this_time_of_the_day())).ask(data.REPROMPT_PLAYERNO.format(util.this_time_of_the_day()))
         else:
             attr["status"] = "collecting names"
             attr["players_collected"] = 0
