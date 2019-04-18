@@ -96,7 +96,7 @@ class ExitIntentHandler(AbstractRequestHandler):
         # type: (HandlerInput) -> Response
         logger.info("In ExitIntentHandler")
         handler_input.response_builder.speak(
-            data.EXIT_SKILL_MESSAGE).set_should_end_session(True)
+            data.EXIT_SKILL_MESSAGE.format(util.time_of_the_day)).set_should_end_session(True)
         return handler_input.response_builder.response
 
 
@@ -114,12 +114,17 @@ class PlayerNumberIntentHandler(AbstractRequestHandler):
         attr = handler_input.attributes_manager.session_attributes
 
         attr["player_no"] = handler_input.request_envelope.request.intent.slots["player_number"].value
-        attr["status"] = "collecting names"
-        attr["players_collected"] = 0
-        attr["player_names"] = []
-
-        handler_input.response_builder.speak(
-            data.GET_PLAYERNAME + "1?").ask(data.GET_PLAYERNAME + "1?").set_should_end_session(False)
+        attr["checked_single_player"] == False
+        if int(attr["player_no"]) == 1 and not attr["checked_single_player"]:
+            handler_input.response_builder.speak(
+                data.SINGLE_PLAYER_MESSAGE + data.REPROMPT_PLAYERNO).ask(data.REPROMPT_PLAYERNO)
+        else:
+            attr["status"] = "collecting names"
+            attr["players_collected"] = 0
+            attr["player_names"] = []
+                
+            handler_input.response_builder.speak(
+                data.GET_PLAYERNAME + "1?").ask(data.GET_PLAYERNAME + "1?").set_should_end_session(False)
         return handler_input.response_builder.response
 
 
@@ -274,25 +279,6 @@ class RepeatHandler(AbstractRequestHandler):
             return response_builder.response
 
 
-class FallbackIntentHandler(AbstractRequestHandler):
-    """Handler for handling fallback intent.
-     2018-May-01: AMAZON.FallackIntent is only currently available in
-     en-US locale. This handler will not be triggered except in that
-     locale, so it can be safely deployed for any locale."""
-
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return is_intent_name("AMAZON.FallbackIntent")(handler_input)
-
-    def handle(self, handler_input):
-        # type: (HandlerInput) -> Response
-        logger.info("In FallbackIntentHandler")
-        handler_input.response_builder.speak(
-            data.FALLBACK_ANSWER).ask(data.HELP_MESSAGE)
-
-        return handler_input.response_builder.response
-
-
 class QuizAnswerHandler(AbstractRequestHandler):
     """Handler for answering the quiz.
 
@@ -354,6 +340,27 @@ class QuizAnswerHandler(AbstractRequestHandler):
             handler_input.response_builder.speak(resp + " " + text).ask(text)
 
             return handler_input.response_builder.response
+
+
+class FallbackIntentHandler(AbstractRequestHandler):
+    """Handler for handling fallback intent.
+     2018-May-01: AMAZON.FallackIntent is only currently available in
+     en-US locale. This handler will not be triggered except in that
+     locale, so it can be safely deployed for any locale."""
+
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return is_intent_name("AMAZON.FallbackIntent")(handler_input)
+
+    def handle(self, handler_input):
+        # type: (HandlerInput) -> Response
+        logger.info("In FallbackIntentHandler")
+        handler_input.response_builder.speak(
+            data.FALLBACK_ANSWER).ask(data.HELP_MESSAGE)
+
+        return handler_input.response_builder.response
+
+
 
 
 # Interceptor classes
