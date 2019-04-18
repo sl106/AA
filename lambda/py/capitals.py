@@ -454,7 +454,7 @@ capitals_data = [
         "city": "Monrovia"
     },
     {
-        "country": "Libyan Arab Jamahiriya",
+        "country": "Libya",
         "city": "Tripoli"
     },
     {
