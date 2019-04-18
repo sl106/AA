@@ -49,12 +49,12 @@ class LaunchRequestHandler(AbstractRequestHandler):
         if util.time_of_the_day() == "morning":
             message += "Damn, isn't it a bit early to be drinking? No judgement here though. "
         elif util.time_of_the_day() == "afternoon":
-            message += "Now day drinking is something I can get behind! "
+            message += "Now, day drinking is something I can get behind! "
         elif util.time_of_the_day() == "evening":
             message += "Let's partaaayyyy! "
         else:
             message += "As my good friend, Paul, once said: <voice name=\"Joey\"><lang xml:lang=\"en-US\"> Let's get schwasted! </lang></voice> "
-        
+
         message = message + data.REPROMPT_PLAYERNO.format(util.this_time_of_the_day())
 
         handler_input.response_builder.speak(message).ask(
