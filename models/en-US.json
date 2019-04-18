@@ -93,8 +93,8 @@
                           "type": "TF"
                       },
                       {
-                          "name": "other",
-                          "type": "AMAZON.LITERAL"
+                          "name": "other_ans",
+                          "type": "AMAZON.SearchQuery"
                       }
                   ],
                   "samples": [
