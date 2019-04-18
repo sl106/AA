@@ -94,7 +94,7 @@ class HelpIntentHandler(AbstractRequestHandler):
         if not "status" in attr :
             message = message + " " + data.WELCOME_MESSAGE
         elif attr["status"] == "question":
-            message = message + " {}, the question was {}".format(attr["current_player"],util.get_question(attr["current_item"]))
+            message = message + " {}, the question was {}".format(attr["current_player"],util.get_question(attr["quiz_item"]))
         elif attr["status"] == "player number":
             message = message + " So, how many players are playing {}?".format(util.this_time_of_the_day())
         elif attr["status"] == "collecting names":
@@ -332,15 +332,14 @@ class QuizAnswerHandler(AbstractRequestHandler):
     def can_handle(self, handler_input):
         # type: (HandlerInput) -> bool
         attr = handler_input.attributes_manager.session_attributes
-        return (((not is_intent_name("NewThemeIntent")(handler_input) and
+        return (not is_intent_name("NewThemeIntent")(handler_input) and
                 not is_intent_name("AMAZON.CancelIntent")(handler_input) and
                 not is_intent_name("AMAZON.StopIntent")(handler_input) and
                 not is_intent_name("AMAZON.PauseIntent")(handler_input) and
                 not is_intent_name("AMAZON.HelpIntent")(handler_input) and
                 not is_intent_name("UnsureIntent")(handler_input) and
                 not is_intent_name("AMAZON.FallbackIntent")(handler_input) and
-                not is_intent_name("AMAZON.RepeatIntent")) or
-                is_intent_name("AnswerIntent")) and
+                not is_intent_name("AMAZON.RepeatIntent") and
                 attr.get("status") == "question")
 
     def handle(self, handler_input):
