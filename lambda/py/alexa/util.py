@@ -7,6 +7,7 @@ import requests
 import json
 import random
 import csv
+import capitals
 from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_core.utils import is_request_type
 
@@ -235,7 +236,7 @@ def get_item(attr):
     elif attr["current_theme"] == "harry potter" or attr["current_theme"] == "hp" or attr["current_theme"] == "fantastic beasts" or attr["current_theme"] == "the wizarding world":
         return make_hp_question()
     elif attr["current_theme"] == "capitals" or attr["current_theme"] == "countries" or attr["current_theme"] == "geography" or attr["current_theme"] == "capital cities":
-        return ["CAPITALS QUESTION", "ANSWER"]
+        return capitals.make_capitals_question()
     elif attr["current_theme"] == "star wars":
         return make_sw_question()
     else:

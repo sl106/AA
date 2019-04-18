@@ -947,6 +947,3 @@ def make_capitals_question():
     questions = [[x["country"], x["city"]] for x in capitals_data]
     random_no = random.randint(0, len(questions) - 1)
     return questions[random_no]
-
-for i in range(10):
-    print(make_capitals_question())
