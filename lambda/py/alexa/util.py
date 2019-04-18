@@ -1,4 +1,3 @@
-
 """Utility module to generate text for commonly used responses."""
 
 import random
@@ -10,6 +9,7 @@ import csv
 import capitals
 from ask_sdk_core.handler_input import HandlerInput
 from ask_sdk_core.utils import is_request_type
+import datetime
 
 from . import data
 
@@ -112,7 +112,7 @@ def choose_got_question(choose_random, response_data):
 #General Knowledge
 def make_genknow_question():
     star_list = []
-    api_url = 'https://opentdb.com/api.php?amount=1&category=9&difficulty=medium&type=boolean'
+    api_url = 'https://opentdb.com/api.php?amount=1&type=boolean'
     response = requests.get(api_url)
     if response.status_code == 200:
         result = json.loads(response.content.decode('utf-8'))
@@ -185,13 +185,15 @@ def choose_hp_question(choose_random, response_data):
 
 #Star Wars
 def make_sw_question():
-   cool_characters = [1,2,3,4,5,9,10,11,12,13,14,20,21,22,44,25,32,36,51,79]
+   cool_characters = [1,2,3,4,5,9,10,11,12,13,14,21,22,44,25,32,36,51,79]
    random_no = random.randint(0, len(cool_characters) - 1)
    response = requests.get("https://swapi.co/api/people/"+str(cool_characters[random_no])+"/?format=json")
    response = response.text
    response_data = json.loads(response)
    choose_random = random.randint(0,2)
    x = choose_sw_question(choose_random, response_data)
+   while x[1].lower() == "unknown":
+       x = choose_sw_question(random.randint(0,2), response_data)
    return x
 
 def choose_sw_question(choose_random, response_data):
@@ -295,16 +297,16 @@ def generate_forfeit(attr, player):
     if choice <= 0.45:
         no = random.randint(1,4)
         if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-        return "{}, drink {} many drinks.".format(player, no)
+            return "{}, drink {} drink.".format(player, no)
+        return "{}, drink {} drinks.".format(player, no)
     elif choice <= 0.55:
         return "{}, finish your drink.".format(player)
     elif choice <= 0.75:
         if len(players) < 2:
             no = random.randint(1,4)
             if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-            return "{}, drink {} many drinks.".format(player, no)
+                return "{}, drink {} drink.".format(player, no)
+            return "{}, drink {} drinks.".format(player, no)
         else :
             newplayer = random.choice(players)
             while newplayer == player:
@@ -314,8 +316,8 @@ def generate_forfeit(attr, player):
         if len(players) < 2:
             no = random.randint(1,4)
             if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-            return "{}, drink {} many drinks.".format(player, no)
+                return "{}, drink {} drink.".format(player, no)
+            return "{}, drink {} drinks.".format(player, no)
         else :
             newplayer = random.choice(players)
             while newplayer == player:
@@ -329,8 +331,8 @@ def generate_task(attr, player):
         if len(players) < 2:
             no = random.randint(1,4)
             if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-            return "{}, drink {} many drinks.".format(player, no)
+                return "{}, drink {} drink.".format(player, no)
+            return "{}, drink {} drinks.".format(player, no)
         else:
             newplayer = random.choice(players)
             while newplayer == player:
@@ -351,10 +353,23 @@ def generate_task(attr, player):
         if len(players) < 2:
             no = random.randint(1,4)
             if no == 1:
-                return "{}, drink {} many drink.".format(player, no)
-            return "{}, drink {} many drinks.".format(player, no)
+                return "{}, drink {} drink.".format(player, no)
+            return "{}, drink {} drinks.".format(player, no)
         else:
             newplayer = random.choice(players)
             while newplayer == player:
                 newplayer = random.choice(players)
             return "{}, come up with a truth or dare for {}.".format(player, newplayer)
+
+
+def time_of_the_day():
+    current_time = datetime.datetime.now().hour
+    int(current_time)
+    if current_time < 12:
+        return 'morning'
+    elif 12 <= current_time < 18:
+        return 'afternoon'
+    elif 18 <= current_time < 21:
+        return 'evening'
+    else:
+        return 'night'
