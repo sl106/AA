@@ -4,7 +4,10 @@ WELCOME_MESSAGE = ("Welcome to that drinking game! ")
 
 START_QUIZ_MESSAGE = ("I've been told to tell you to drink responsibly. Let's begin! Which theme would you like for round ")
 
-SINGLE_PLAYER_MESSAGE = "Are you sure you want to play by yourself? <prosody pitch=\"x-high\">Alexa, this is so sad, play despacito.</prosody> <voice name=\"Celine\"><lang xml:lang=\"fr-FR\">Joking!</lang></voice> Last chance though, "
+SINGLE_PLAYER_MESSAGE = ("Are you sure you want to play by yourself? "
+                        "<prosody pitch=\"x-high\">Alexa, this is so sad, play despacito.</prosody> <break time=\"2s\"/>"
+                        "<voice name=\"Celine\"><lang xml:lang=\"fr-FR\">Joking!</lang></voice> "
+                        "<emphasis level="strong">Last chance though,</emphasis> "
 
 NEXT_ROUND_MESSAGE = "Okay! Time for round "
 
@@ -15,7 +18,7 @@ LIST_THEMES = ("The themes to choose from are: "
                 "Star Wars "
                 "or Capitals.")
 
-EXIT_SKILL_MESSAGE = ("Thank you for playing that drinking game. Hope you have a good {}!")
+EXIT_SKILL_MESSAGE = ("Thank you for playing that drinking game. Hope you have a good {}!!!")
 
 REPROMPT_SPEECH = "Which other state or capital would you like to know about?"
 
@@ -24,10 +27,10 @@ REPROMPT_PLAYERNO = "How many players are playing {}?"
 GET_PLAYERNAME = "Who is player "
 
 HELP_MESSAGE = ("These are some of the commands that might help you: "
-                "say repeat for repeating the question,"
-                "new theme for switching the topic,"
-                "quit for exiting the game. "
-                "Now go ahead and have some fun!"
+                "say <emphasis level="strong">repeat</emphasis> for repeating the question, "
+                "<emphasis level="strong">new theme</emphasis> for switching the topic, "
+                "<emphasis level="strong">quit</emphasis> for exiting the game. "
+                "<break time=\"2s\"/> Now go ahead and have some fun!!!"
                 )
 
 CORRECT_SPEECHCONS = ['Booya', 'All righty', 'Bam', 'Bazinga', 'Bingo',
