@@ -49,7 +49,7 @@ class LaunchRequestHandler(AbstractRequestHandler):
         if util.time_of_the_day() == "morning":
             message += "Damn, isn't it a bit early to be drinking? No judgement here though. "
         elif util.time_of_the_day() == "afternoon":
-            message += "Now day drinking is something I can get behind. "
+            message += "<prosody pitch=\"x-high\">Now day drinking is something I can get behind. </prosody>"
         elif util.time_of_the_day() == "evening":
             message += "Let's partaaayyyy! "
         else:
@@ -307,7 +307,7 @@ class RepeatHandler(AbstractRequestHandler):
         response_builder = handler_input.response_builder
         if attr["status"] == "question":
             question = util.get_question(attr["quiz_item"])
-            response_builder.speak(question).ask(attr["current_player"] + ", do you have an answer? The question was: " + question)
+            response_builder.speak(question).ask(attr["current_player"] + ", <emphasis level=\"strong\"> do you have an answer?  The question was: </emphasis>" + question)
             return response_builder.response
         elif "recent_response" in attr:
             cached_response_str = json.dumps(attr["recent_response"])
@@ -354,7 +354,7 @@ class QuizAnswerHandler(AbstractRequestHandler):
             speech = util.get_speechcon(correct_answer=True)
             task = util.generate_task(attr, attr["current_player"])
         else:
-            speech = util.get_speechcon(correct_answer=False) + "! The answer was " + item[1]
+            speech = util.get_speechcon(correct_answer=False) + "! <emphasis level=\"strong\"> The answer was </emphasis>" + item[1]
             task = util.generate_forfeit(attr, attr["current_player"])
 
         resp = speech + "! " + task

@@ -21,7 +21,7 @@
             "codeUri": "lambda/py/lambda_upload",
             "functionName": "ask-custom-Alexa_Anonymous-default",
             "handler": "lambda_function.lambda_handler",
-            "revisionId": "ab574198-fc88-4457-997c-9d62bcea40ae",
+            "revisionId": "1727055f-d1c5-4c86-b4cd-7f217751b319",
             "runtime": "python3.6"
           }
         ]
