@@ -4,7 +4,7 @@ WELCOME_MESSAGE = ("Welcome to that drinking game! ")
 
 START_QUIZ_MESSAGE = ("I've been told to tell you to drink responsibly. Let's begin! Which theme would you like for round ")
 
-SINGLE_PLAYER_MESSAGE = "Are you sure you want to play by yourself? Alexa, this is so sad, play despacito. Joking! Last chance though, "
+SINGLE_PLAYER_MESSAGE = "Are you sure you want to play by yourself? <prosody pitch=\"x-high\">Alexa, this is so sad, play despacito.</prosody> <voice name=\"Celine\"><lang xml:lang=\"fr-FR\">Joking!</lang></voice> Last chance though, "
 
 NEXT_ROUND_MESSAGE = "Okay! Time for round "
 
@@ -26,7 +26,7 @@ GET_PLAYERNAME = "Who is player "
 HELP_MESSAGE = ("These are some of the commands that might help you: "
                 "say repeat for repeating the question,"
                 "new theme for switching the topic,"
-                "quit for exiting the game."
+                "quit for exiting the game. "
                 "Now go ahead and have some fun!"
                 )
 
