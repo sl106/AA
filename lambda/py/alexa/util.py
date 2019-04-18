@@ -185,13 +185,15 @@ def choose_hp_question(choose_random, response_data):
 
 #Star Wars
 def make_sw_question():
-   cool_characters = [1,2,3,4,5,9,10,11,12,13,14,20,21,22,44,25,32,36,51,79]
+   cool_characters = [1,2,3,4,5,9,10,11,12,13,14,21,22,44,25,32,36,51,79]
    random_no = random.randint(0, len(cool_characters) - 1)
    response = requests.get("https://swapi.co/api/people/"+str(cool_characters[random_no])+"/?format=json")
    response = response.text
    response_data = json.loads(response)
    choose_random = random.randint(0,2)
    x = choose_sw_question(choose_random, response_data)
+   while x[1].lower() == "unknown":
+       x = choose_sw_question(random.randint(0,2), response_data)
    return x
 
 def choose_sw_question(choose_random, response_data):
