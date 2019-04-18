@@ -112,7 +112,7 @@ def choose_got_question(choose_random, response_data):
 #General Knowledge
 def make_genknow_question():
     star_list = []
-    api_url = 'https://opentdb.com/api.php?amount=1&category=9&difficulty=medium&type=boolean'
+    api_url = 'https://opentdb.com/api.php?amount=1&type=boolean'
     response = requests.get(api_url)
     if response.status_code == 200:
         result = json.loads(response.content.decode('utf-8'))
@@ -363,7 +363,6 @@ def generate_task(attr, player):
 def time_of_the_day():
     current_time = datetime.datetime.now().hour
     int(current_time)
-    print(current_time)
     if current_time < 12:
         return 'morning'
     elif 12 <= current_time < 18:
