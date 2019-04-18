@@ -23,7 +23,12 @@ REPROMPT_PLAYERNO = "How many players are playing {}?"
 
 GET_PLAYERNAME = "Who is player "
 
-HELP_MESSAGE = ("HELP MESSAGE HERE")
+HELP_MESSAGE = ("These are some of the commands that might help you: "
+                "say repeat for repeating the question,"
+                "new theme for switching the topic,"
+                "quit for exiting the game."
+                "Now go ahead and have some fun!"
+                )
 
 CORRECT_SPEECHCONS = ['Booya', 'All righty', 'Bam', 'Bazinga', 'Bingo',
                       'Boom', 'Bravo', 'Cha Ching', 'Cheers', 'Dynomite',
@@ -44,4 +49,3 @@ BAD_ANSWER = (
 
 FALLBACK_ANSWER = (
     "Sorry. I can't help you with that. {}".format(HELP_MESSAGE))
-
